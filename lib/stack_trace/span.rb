@@ -43,7 +43,7 @@ module StackTrace
         method_name: method_name,
         arguments: args,
         value: value,
-        exception: exception,
+        exception: exception_as_json,
         time: time,
         spans: spans.map(&:as_json)
       }
@@ -53,6 +53,15 @@ module StackTrace
 
     attr_accessor :started_at, :finished_at
     attr_writer :method_name, :args, :spans
+
+    def exception_as_json
+      return unless exception
+
+      {
+        message: exception.message,
+        backtrace: exception.backtrace
+      }
+    end
 
     def time_ns
       (finished_at - started_at) * 1_000_000_000
