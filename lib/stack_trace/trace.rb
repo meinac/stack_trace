@@ -7,10 +7,10 @@ module StackTrace
         span = current.add(method_name, *args)
         span.value = yield
       rescue StandardError => e
-        span.exception = e
+        span&.exception = e
         raise e
       ensure
-        span.close
+        span&.close
       end
 
       def start
