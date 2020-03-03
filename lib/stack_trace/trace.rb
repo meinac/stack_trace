@@ -1,5 +1,7 @@
 # frozen-string-literal: true
 
+require "securerandom"
+
 module StackTrace
   class Trace
     class << self
@@ -26,9 +28,10 @@ module StackTrace
       end
     end
 
-    attr_reader :spans
+    attr_reader :uuid, :spans
 
     def initialize
+      @uuid = SecureRandom.uuid
       @spans = []
     end
 
@@ -37,7 +40,10 @@ module StackTrace
     end
 
     def as_json
-      { spans: spans.map(&:as_json) }
+      {
+        uuid: uuid,
+        spans: spans.map(&:as_json)
+      }
     end
 
     private
