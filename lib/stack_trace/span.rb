@@ -5,15 +5,15 @@ module StackTrace
     attr_accessor :value, :exception
     attr_reader :method_name, :args, :spans
 
-    def initialize(method_name, *args)
+    def initialize(method_name, args)
       self.started_at = Time.now.to_f
       self.method_name = method_name
       self.args = args
       self.spans = []
     end
 
-    def add(method_name, *args)
-      (spans << span = Span.new(method_name, *args)) && span
+    def add(method_name, args)
+      (spans << span = Span.new(method_name, args)) && span
     end
 
     def close

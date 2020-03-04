@@ -67,9 +67,10 @@ module StackTrace
     def define_trace_method(method_name)
       traced_method_name = traced_method_name(method_name)
       mod.alias_method(traced_method_name, method_name)
+      params = mod.instance_method(method_name).parameters
 
       mod.define_method(method_name) do |*args|
-        Trace.track(method_name, *args) { send(traced_method_name, *args) }
+        Trace.track(method_name, params: params, args: args.dup) { send(traced_method_name, *args) }
       end
     end
 

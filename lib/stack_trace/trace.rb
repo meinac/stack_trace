@@ -5,8 +5,8 @@ require "securerandom"
 module StackTrace
   class Trace
     class << self
-      def track(method_name, *args)
-        span = current.add(method_name, *args)
+      def track(method_name, params: [], args: [])
+        span = current.add(method_name, params, args)
         span.value = yield
       rescue StandardError => e
         span&.exception = e
@@ -35,8 +35,10 @@ module StackTrace
       @spans = []
     end
 
-    def add(method_name, *args)
-      add_to_active_span(method_name, *args) || create_new_span(method_name, *args)
+    def add(method_name, params, args)
+      arguments = ParamMatcher.match(params, args)
+
+      add_to_active_span(method_name, arguments) || create_new_span(method_name, arguments)
     end
 
     def as_json

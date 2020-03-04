@@ -1,6 +1,7 @@
 # frozen-string-literal: true
 
 require "stack_trace/configuration"
+require "stack_trace/param_matcher"
 require "stack_trace/setup"
 require "stack_trace/span"
 require "stack_trace/spy"
