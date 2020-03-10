@@ -3,17 +3,18 @@
 module StackTrace
   class Span
     attr_accessor :value, :exception
-    attr_reader :method_name, :args, :spans
+    attr_reader :receiver, :method_name, :args, :spans
 
-    def initialize(method_name, args)
+    def initialize(receiver, method_name, args)
+      self.receiver = receiver
       self.started_at = Time.now.to_f
       self.method_name = method_name
       self.args = args
       self.spans = []
     end
 
-    def add(method_name, args)
-      (spans << span = Span.new(method_name, args)) && span
+    def add(receiver, method_name, args)
+      (spans << span = Span.new(receiver, method_name, args)) && span
     end
 
     def close
@@ -40,6 +41,7 @@ module StackTrace
 
     def as_json
       {
+        receiver: receiver,
         method_name: method_name,
         arguments: args,
         value: value,
@@ -52,7 +54,7 @@ module StackTrace
     private
 
     attr_accessor :started_at, :finished_at
-    attr_writer :method_name, :args, :spans
+    attr_writer :receiver, :method_name, :args, :spans
 
     def exception_as_json
       return unless exception

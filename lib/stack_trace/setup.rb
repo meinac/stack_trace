@@ -2,7 +2,8 @@
 
 module StackTrace
   class Setup
-    IGNORED_METHODS_REGEX = /^(?:_traced_|send)/
+    # TODO: Change this logic!
+    IGNORED_METHODS_REGEX = /^(?:_traced_|send|stack_trace_id|class|object_id)/
 
     class << self
       def call(modules)
@@ -78,7 +79,7 @@ module StackTrace
       params = mod.instance_method(method_name).parameters
 
       mod.define_method(method_name) do |*args|
-        Trace.track(method_name, params: params, args: args.dup) { send(traced_method_name, *args) }
+        Trace.track(stack_trace_id, method_name, params: params, args: args.dup) { send(traced_method_name, *args) }
       end
     end
 
