@@ -43,8 +43,11 @@ With the belove configuration, StackTrace will trace all the methods of **Foo** 
 StackTrace.configure do |config|
   config.enabled = true
   config.modules = {
-      Foo => :all,
-      Bar => [:zoo]
+      Foo => {
+        instance_methods: :all,
+        class_methods: :all
+      },
+      Bar => { instance_methods: [:zoo] }
   }
 end
 ```
@@ -77,6 +80,7 @@ The `Hash` object returned by `StackTrace::Trace::as_json` method has the follow
 
 * **uuid**: This is a UUID V4 value to identify the trace.
 * **spans**: This is an array of spans which has the following structure;
+  * **receiver**: The identifier for the receiver object.
   * **method_name**: The name of the method which this span is created for.
   * **arguments**: Arguments received by the method.
   * **value**: The return value of the method.
@@ -102,7 +106,7 @@ end
 StackTrace.configure do |config|
   config.enabled = true
   config.modules = {
-    Greeting => :all
+    Greeting => { instance_methods: :all }
   }
 end
 ```
@@ -119,6 +123,7 @@ result == {
     uuid: "12e2a347-8d5a-4d1d-a5ad-efe012ffcdf9",
     spans: [
         {
+            receiver: "Greeting#123124312",
             method_name: "initialize",
             arguments: {},
             value: nil,
@@ -127,6 +132,7 @@ result == {
             spans: []
         },
         {
+            receiver: "Greeting#123124312",
             method_name: "hello",
             arguments: {
                 first_name: "john",
@@ -137,6 +143,7 @@ result == {
             time: "20.831909134113330 µs",
             spans: [
                 {
+                    receiver: "Greeting#123124312",
                     method_name: "capitalize",
                     arguments: {
                         string: "john"
@@ -147,6 +154,7 @@ result == {
                     spans: []
                 },
                 {
+                    receiver: "Greeting#123124312",
                     method_name: "capitalize",
                     arguments: {
                         string: "doe"
