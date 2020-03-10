@@ -3,7 +3,7 @@
 module StackTrace
   class Setup
     # TODO: Change this logic later with a rubost one.
-    IGNORED_METHODS_REGEX = /^(?:_traced_|send|stack_trace_id|class|object_id)/
+    IGNORED_METHODS_REGEX = /^(?:_traced_|send|stack_trace_id|class|object_id|inspect)/
 
     class << self
       def call(modules)
