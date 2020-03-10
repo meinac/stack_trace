@@ -11,15 +11,11 @@ require "stack_trace/version"
 module StackTrace
   def self.configure
     yield configuration
-    setup!
+    Setup.call(configuration.modules)
   end
 
   def self.configuration
     @configuration ||= Configuration.new
-  end
-
-  def self.setup!
-    configuration.modules.each { |mod, method_names| Setup.call(mod, method_names) }
   end
 
   def self.trace

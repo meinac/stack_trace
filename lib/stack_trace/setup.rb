@@ -4,10 +4,18 @@ module StackTrace
   class Setup
     IGNORED_METHODS_REGEX = /^(?:_traced_|send)/
 
-    def self.call(mod, method_names)
-      mod.extend(Spy)
-      mod.stack_trace_setup = new(mod, method_names)
-      mod.stack_trace_setup.setup_existing_methods
+    class << self
+      def call(modules)
+        modules.each { |mod, method_names| setup_module(mod, method_names) }
+      end
+
+      private
+
+      def setup_module(mod, method_names)
+        mod.extend(Spy)
+        mod.stack_trace_setup = new(mod, method_names)
+        mod.stack_trace_setup.setup_existing_methods
+      end
     end
 
     def initialize(mod, method_names)
