@@ -19,20 +19,24 @@ module StackTrace
 
     def match
       params.each_with_object({}) do |(type, parameter), memo|
-        case type
-        when :opt, :req, :keyrest
-          memo[parameter] = args.shift.inspect
-        when :rest
-          memo[parameter] = (assign_kwargs? ? args.shift(args.length - 1) : args).inspect
-        when :key, :keyreq
-          memo[parameter] = args.first.is_a?(Hash) && args.first.fetch(parameter, nil).inspect
-        end
+        memo[parameter] = extract_param(parameter, type).inspect
       end
     end
 
     private
 
     attr_accessor :params, :args
+
+    def extract_param(parameter, type)
+      case type
+      when :opt, :req, :keyrest
+        args.shift.inspect
+      when :rest
+        assign_kwargs? ? args.shift(args.length - 1) : args
+      when :key, :keyreq
+        args.first.is_a?(Hash) && args.first.fetch(parameter, nil)
+      end
+    end
 
     def assign_kwargs?
       has_kwargs? && args.last.is_a?(Hash)
