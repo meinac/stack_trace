@@ -21,11 +21,11 @@ module StackTrace
       params.each_with_object({}) do |(type, parameter), memo|
         case type
         when :opt, :req, :keyrest
-          memo[parameter] = args.shift
+          memo[parameter] = args.shift.inspect
         when :rest
-          memo[parameter] = assign_kwargs? ? args.shift(args.length - 1) : args
+          memo[parameter] = (assign_kwargs? ? args.shift(args.length - 1) : args).inspect
         when :key, :keyreq
-          memo[parameter] = args.first.is_a?(Hash) && args.first.fetch(parameter, nil)
+          memo[parameter] = args.first.is_a?(Hash) && args.first.fetch(parameter, nil).inspect
         end
       end
     end

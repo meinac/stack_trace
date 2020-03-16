@@ -11,7 +11,7 @@ module StackTrace
 
       module InstanceMethods
         def stack_trace_id
-          self
+          inspect
         end
       end
     end
