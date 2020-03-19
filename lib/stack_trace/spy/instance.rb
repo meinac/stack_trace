@@ -3,12 +3,18 @@
 module StackTrace
   module Spy
     module Instance
-      include Base
-
-      attr_accessor :stack_trace_name
+      attr_accessor :stack_trace_setup, :stack_trace_name
 
       def self.extended(mod)
         mod.include(InstanceMethods)
+      end
+
+      def method_added(method_name)
+        stack_trace_setup.setup_method(method_name)
+      end
+
+      def singleton_method_added(method_name)
+        singleton_class.stack_trace_setup&.setup_method(method_name)
       end
 
       module InstanceMethods

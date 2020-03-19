@@ -3,9 +3,7 @@
 module StackTrace
   module Spy
     module EigenClass
-      include Base
-
-      attr_accessor :stack_trace_name
+      attr_accessor :stack_trace_setup, :stack_trace_name
       alias_method :stack_trace_id, :stack_trace_name
 
       def self.extended(mod)
