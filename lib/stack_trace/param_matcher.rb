@@ -18,8 +18,9 @@ module StackTrace
     end
 
     def match
-      params.each_with_object({}) do |(type, parameter), memo|
-        memo[parameter] = extract_param(parameter, type).inspect
+      params.each_with_object({}).with_index do |((type, parameter), memo), index|
+        parameter = "unknown parameter #{index}" unless parameter
+        memo[parameter] = extract_param(parameter, type).to_s
       end
     end
 
@@ -30,7 +31,7 @@ module StackTrace
     def extract_param(parameter, type)
       case type
       when :opt, :req, :keyrest
-        args.shift.inspect
+        args.shift
       when :rest
         assign_kwargs? ? args.shift(args.length - 1) : args
       when :key, :keyreq
