@@ -44,7 +44,7 @@ module StackTrace
         receiver: receiver,
         method_name: method_name,
         arguments: args,
-        value: value.inspect,
+        value: value.to_s,
         exception: exception_as_json,
         time: time,
         spans: spans.map(&:as_json)
