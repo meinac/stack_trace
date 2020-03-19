@@ -122,7 +122,7 @@ module StackTrace
     end
 
     def mod_methods
-      mod.instance_methods(regular_methods?) + [:initialize]
+      mod.instance_methods(regular_methods?) + mod.private_instance_methods(regular_methods?) + [:initialize]
     end
 
     def regular_methods?
