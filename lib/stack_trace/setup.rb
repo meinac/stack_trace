@@ -12,7 +12,7 @@ module StackTrace
 
       def inherited(klass)
         modules.each do |mod, config|
-          setup(mod, config) if fetch_modules(mod).include?(klass)
+          setup(klass, config) if fetch_modules(mod).include?(klass)
         end
       end
 
@@ -52,12 +52,12 @@ module StackTrace
 
       def process_hash(hash)
         ObjectSpace.each_object.select do |object|
-          Class === object && object.superclass == hash[:inherits]
+          (Class === object || Module === object) && object != hash[:inherits] && object.ancestors.include?(hash[:inherits])
         end
       end
 
       def setup_module(mod_name, mod, method_names, spy_module)
-        return if mod.respond_to?(:stack_trace_name)
+        return if mod.respond_to?(:stack_trace_name) && mod.stack_trace_name
 
         mod.extend(spy_module)
         mod.stack_trace_name = mod_name

@@ -6,7 +6,7 @@ module StackTrace
       attr_accessor :stack_trace_setup
 
       def method_added(method_name)
-        stack_trace_setup.setup_method(method_name) if stack_trace_setup
+        stack_trace_setup.setup_method(method_name)
       end
     end
   end
