@@ -52,6 +52,13 @@ StackTrace.configure do |config|
 end
 ```
 
+`instance_methods` and `class_methods` can be configured with the following values;
+
+- `:all` to trace all methods
+- `:skip_inherited` to trace only the methods defined in module/class
+- Array of symbols to specify method names one by one
+- Regular expression to trace all methods with matching method names
+
 #### Tracing
 
 After configuring the StackTrace, you can call `StackTrace::trace` method to create a tracing information of the code execution as shown below;
