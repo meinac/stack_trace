@@ -3,7 +3,7 @@
 module StackTrace
   class Setup
     # TODO: Change this logic later with a rubost one.
-    IGNORED_METHODS_REGEX = /^(?:_traced_|send|stack_trace_id|class|object_id|inspect)/
+    IGNORED_METHODS_REGEX = /^(?:_traced_|send|stack_trace_id|class|object_id|inspect|stack_trace_name)/
 
     class << self
       def call(modules)
@@ -13,12 +13,13 @@ module StackTrace
       private
 
       def setup(mod, instance_methods: [], class_methods: [])
-        setup_module(mod, instance_methods, Spy::Instance)
-        setup_module(mod.singleton_class, class_methods, Spy::EigenClass)
+        setup_module(mod.name, mod, instance_methods, Spy::Instance)
+        setup_module(mod.name, mod.singleton_class, class_methods, Spy::EigenClass)
       end
 
-      def setup_module(mod, method_names, spy_module)
+      def setup_module(mod_name, mod, method_names, spy_module)
         mod.extend(spy_module)
+        mod.stack_trace_name = mod_name
         mod.stack_trace_setup = new(mod, method_names)
         mod.stack_trace_setup.setup_existing_methods
       end

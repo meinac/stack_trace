@@ -5,14 +5,16 @@ module StackTrace
     module EigenClass
       include Base
 
+      attr_accessor :stack_trace_name
+      alias_method :stack_trace_id, :stack_trace_name
+
       def self.extended(mod)
         mod.include(InstanceMethods)
       end
 
       module InstanceMethods
-        def stack_trace_id
-          inspect
-        end
+        attr_accessor :stack_trace_name
+        alias_method :stack_trace_id, :stack_trace_name
       end
     end
   end
