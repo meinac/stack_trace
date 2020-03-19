@@ -56,11 +56,24 @@ module StackTrace
     end
 
     def traced_methods
-      method_names == :all ? all_traceable_methods : method_names
+      case method_names
+      when Array
+        method_names
+      when Symbol
+        all_traceable_methods
+      when Regexp
+        all_matching_methods
+      else
+        raise "Only `Array`, `Symbol` or `Regexp` values are allowed for method_names"
+      end
     end
 
     def has_method?(method_name)
       mod_methods.include?(method_name)
+    end
+
+    def all_matching_methods
+      all_traceable_methods.select { |m| m =~ method_names }
     end
 
     def all_traceable_methods
@@ -68,7 +81,11 @@ module StackTrace
     end
 
     def mod_methods
-      mod.instance_methods + [:initialize]
+      mod.instance_methods(regular_methods?) + [:initialize]
+    end
+
+    def regular_methods?
+      method_names =! :skip_inherited
     end
 
     def overridden?(method_name)
