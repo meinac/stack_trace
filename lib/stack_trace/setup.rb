@@ -6,18 +6,59 @@ module StackTrace
     IGNORED_METHODS_REGEX = /^(?:_traced_|send|stack_trace_id|class|object_id|inspect|stack_trace_name)/
 
     class << self
-      def call(modules)
+      def call
         modules.each { |mod, config| setup(mod, config) }
+      end
+
+      def inherited(klass)
+        modules.each do |mod, config|
+          setup(mod, config) if fetch_modules(mod).include?(klass)
+        end
       end
 
       private
 
+      def modules
+        StackTrace.configuration.modules
+      end
+
+      def all_modules
+        modules.keys.map { |mod| fetch_modules(mod) }.flatten
+      end
+
       def setup(mod, instance_methods: [], class_methods: [])
-        setup_module(mod.name, mod, instance_methods, Spy::Instance)
-        setup_module(mod.name, mod.singleton_class, class_methods, Spy::EigenClass)
+        fetch_modules(mod).each do |m|
+          setup_module(m.name, m, instance_methods, Spy::Instance)
+          setup_module(m.name, m.singleton_class, class_methods, Spy::EigenClass)
+        end
+      end
+
+      def fetch_modules(mod)
+        case mod
+        when Regexp
+          process_regexp(mod)
+        when Hash
+          process_hash(mod)
+        else
+          [mod].flatten
+        end
+      end
+
+      def process_regexp(regex)
+        ObjectSpace.each_object.select do |object|
+          (Class === object || Module === object) && object.name =~ regex
+        end
+      end
+
+      def process_hash(hash)
+        ObjectSpace.each_object.select do |object|
+          Class === object && object.superclass == hash[:inherits]
+        end
       end
 
       def setup_module(mod_name, mod, method_names, spy_module)
+        return if mod.respond_to?(:stack_trace_name)
+
         mod.extend(spy_module)
         mod.stack_trace_name = mod_name
         mod.stack_trace_setup = new(mod, method_names)

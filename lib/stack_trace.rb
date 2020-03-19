@@ -9,11 +9,12 @@ require "stack_trace/spy/eigen_class"
 require "stack_trace/spy/instance"
 require "stack_trace/trace"
 require "stack_trace/version"
+require "stack_trace/inherited_callback"
 
 module StackTrace
   def self.configure
     yield configuration
-    Setup.call(configuration.modules)
+    Setup.call
   end
 
   def self.configuration

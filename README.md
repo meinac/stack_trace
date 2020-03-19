@@ -59,6 +59,27 @@ end
 - Array of symbols to specify method names one by one
 - Regular expression to trace all methods with matching method names
 
+Also the keys for `modules` hash can have the following values;
+
+- `Class/Module` to trace methods of given value
+- An array of `Class/Module` to trace methods of all given values
+- Regular expression to trace methods of all matching modules or classes.
+- { inherits: Class } to trace methods of all classes inherited from base class.
+
+Here are the example usages;
+
+```ruby
+StackTrace.configure do |config|
+  config.enabled = true
+  config.modules = {
+      Foo => { instance_methods: :skip_inherited },
+      [Too, Joo] => { class_methods: :all }
+      /Ba.*/ => { instance_methods: :all },
+      { inherits: Zoo } => { instance_methods: [:foo, :bar, :zoo] }
+  }
+end
+```
+
 #### Tracing
 
 After configuring the StackTrace, you can call `StackTrace::trace` method to create a tracing information of the code execution as shown below;
