@@ -4,15 +4,13 @@ require "securerandom"
 
 module StackTrace
   class Trace
+    TRACE_START_EVENTS = %i(call c_call).freeze
+    TRACE_END_EVENTS = %i(return c_return).freeze
+    TRACE_RAISE_EVENT = :raise
+
     class << self
-      def track(receiver, method_name, params: [], args: [])
-        span = current.add(receiver, method_name, params, args)
-        span.value = yield
-      rescue StandardError => e
-        span&.exception = e
-        raise e
-      ensure
-        span&.close
+      def track(trace_point)
+        current.add(trace_point) if trackable?(trace_point)
       end
 
       def start
@@ -26,6 +24,12 @@ module StackTrace
       def as_json
         current.as_json
       end
+
+      private
+
+      def trackable?(trace_point)
+        trace_point.defined_class.trace_method?(trace_point.method_id)
+      end
     end
 
     attr_reader :uuid, :spans
@@ -35,10 +39,15 @@ module StackTrace
       @spans = []
     end
 
-    def add(receiver, method_name, params, args)
-      arguments = ParamMatcher.match(params, args)
-
-      add_to_active_span(receiver, method_name, arguments) || create_new_span(receiver, method_name, arguments)
+    def add(trace_point)
+      case trace_point.event
+      when *TRACE_START_EVENTS
+        create_new_span(trace_point)
+      when *TRACE_END_EVENTS
+        close_current_span(trace_point)
+      else
+        apply_exception_to_current_span(trace_point)
+      end
     end
 
     def as_json
@@ -48,16 +57,27 @@ module StackTrace
       }
     end
 
-    private
-
-    def add_to_active_span(receiver, method_name, *args)
-      return unless @current_span&.open?
-
-      @current_span.add(receiver, method_name, *args)
+    def <<(span)
+      spans << span
     end
 
-    def create_new_span(receiver, method_name, *args)
-      (spans << @current_span = Span.new(receiver, method_name, *args)) && @current_span
+    private
+
+    def create_new_span(trace_point)
+      span = Span.start_from(trace_point, container)
+      container << (@active_span = span)
+    end
+
+    def close_current_span(trace_point)
+      @active_span = @active_span&.close(trace_point)
+    end
+
+    def apply_exception_to_current_span(trace_point)
+      @active_span.exception = trace_point.raised_exception
+    end
+
+    def container
+      @active_span || self
     end
   end
 end

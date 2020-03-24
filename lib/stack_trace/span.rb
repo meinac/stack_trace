@@ -2,29 +2,68 @@
 
 module StackTrace
   class Span
-    attr_accessor :value, :exception
-    attr_reader :receiver, :method_name, :args, :spans
+    class << self
+      def start_from(trace_point, parent)
+        new(
+          receiver(trace_point),
+          trace_point.method_id,
+          extract_arguments(trace_point),
+          parent
+        )
+      end
 
-    def initialize(receiver, method_name, args)
+      private
+
+      def receiver(trace_point)
+        trace_point.binding.eval("self").to_s
+      end
+
+      def extract_arguments(trace_point)
+        trace_point.parameters
+                   .map(&:last)
+                   .each_with_object({}) do |parameter, memo|
+                      memo[parameter] = trace_point.binding.eval(parameter.to_s).inspect
+                   end
+      end
+    end
+
+    attr_writer :exception
+
+    def initialize(receiver, method_name, args, parent)
       self.receiver = receiver
-      self.started_at = Time.now.to_f
       self.method_name = method_name
       self.args = args
+      self.parent = parent
+      self.started_at = Time.now.to_f
       self.spans = []
     end
 
-    def add(receiver, method_name, args)
-      (spans << span = Span.new(receiver, method_name, args)) && span
+    def <<(span)
+      (spans << span) && span
     end
 
-    def close
-      @finished_at = Time.now.to_f
-      @closed = true
+    def close(trace_point)
+      self.value = trace_point.return_value.inspect
+      self.finished_at = Time.now.to_f
+      parent
     end
 
-    def open?
-      !@closed
+    def as_json
+      {
+        receiver: receiver,
+        method_name: method_name,
+        arguments: args,
+        value: value,
+        exception: exception_as_json,
+        time: time,
+        spans: spans.map(&:as_json)
+      }
     end
+
+    private
+
+    attr_accessor :receiver, :method_name, :args, :value, :parent, :spans, :started_at, :finished_at
+    attr_reader :exception
 
     def time
       case time_ns
@@ -38,23 +77,6 @@ module StackTrace
         "#{time_ns / 1_000_000_000} s"
       end
     end
-
-    def as_json
-      {
-        receiver: receiver,
-        method_name: method_name,
-        arguments: args,
-        value: value.to_s,
-        exception: exception_as_json,
-        time: time,
-        spans: spans.map(&:as_json)
-      }
-    end
-
-    private
-
-    attr_accessor :started_at, :finished_at
-    attr_writer :receiver, :method_name, :args, :spans
 
     def exception_as_json
       return unless exception
