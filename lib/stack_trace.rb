@@ -30,3 +30,9 @@ module StackTrace
     @trace_point ||= TracePoint.new(*TRACED_EVENTS) { |tp| Trace.track(tp) }
   end
 end
+
+TracePoint.new(:class) do |tp|
+  tp.binding.eval <<~RUBY
+    self.stack_trace_source_location = __FILE__
+  RUBY
+end.enable

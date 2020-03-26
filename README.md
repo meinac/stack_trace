@@ -56,6 +56,7 @@ end
 
 - `:all` to trace all methods
 - `:skip_inherited` to trace only the methods defined in module/class
+- `:path` to trace all the classes/modules defined in a specific path regex(Make sure that StackTrace gem is loaded into memory before any files to use this configuration)
 - Array of symbols to specify method names one by one
 - Regular expression to trace all methods with matching method names
 

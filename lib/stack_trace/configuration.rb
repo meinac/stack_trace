@@ -26,10 +26,26 @@ module StackTrace
       when Regexp
         klass.name =~ config
       when Hash
-        klass.ancestors.include?(config[:inherits]) && klass != config[:inherits]
+        match_hash_config(config, klass)
       else
         [config].flatten.include?(klass)
       end
+    end
+
+    def match_hash_config(config, klass)
+      inherits_config?(klass, config) || path_config?(klass, config)
+    end
+
+    def inherits_config?(klass, inherits: nil, **)
+      inherits &&
+        klass.ancestors.include?(inherits) &&
+        klass != inherits
+    end
+
+    def path_config?(klass, path: nil, **)
+      path &&
+        klass.stack_trace_source_location &&
+        klass.stack_trace_source_location.match(path)
     end
   end
 end
