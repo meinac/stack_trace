@@ -28,7 +28,7 @@ module StackTrace
       private
 
       def trackable?(trace_point)
-        trace_point.defined_class.trace_method?(trace_point.method_id)
+        trace_point.defined_class&.trace_method?(trace_point.method_id)
       end
     end
 
