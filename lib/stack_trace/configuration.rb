@@ -1,5 +1,7 @@
 # frozen-string-literal: true
 
+require "objspace"
+
 module StackTrace
   class Configuration
     CONFIG_ATTRIBUTES = {
@@ -16,10 +18,18 @@ module StackTrace
     end
 
     def for(klass)
-      modules.find { |module_name_conf, _| config_for_class?(module_name_conf, klass) }
+      config_holder = config_holder_for(klass)
+      modules.find { |module_name_conf, _| config_for_class?(module_name_conf, config_holder) }
     end
 
     private
+
+    # Configuration for StackTrace is done by specifying the class/module itself
+    # so if the klass we receive here is a singleton_class, we should get the
+    # class/module of that singleton_class first.
+    def config_holder_for(klass)
+      klass.singleton_class? ? ObjectSpace.each_object(klass).first : klass
+    end
 
     def config_for_class?(config, klass)
       case config
