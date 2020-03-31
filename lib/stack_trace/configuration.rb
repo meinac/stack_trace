@@ -54,6 +54,7 @@ module StackTrace
 
     def path_config?(klass, path: nil, **)
       path &&
+        klass.respond_to?(:stack_trace_source_location) &&
         klass.stack_trace_source_location &&
         klass.stack_trace_source_location.match(path)
     end
