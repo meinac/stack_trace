@@ -34,7 +34,7 @@ module StackTrace
     def config_for_class?(config, klass)
       case config
       when Regexp
-        klass.name =~ config
+        klass.respond_to?(:name) && klass.name =~ config
       when Hash
         match_hash_config(config, klass)
       else
