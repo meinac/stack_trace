@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    stack_trace (0.2.0)
+    stack_trace (0.2.1)
 
 GEM
   remote: https://rubygems.org/
@@ -38,4 +38,4 @@ DEPENDENCIES
   stack_trace!
 
 BUNDLED WITH
-   2.0.1
+   2.1.4
