@@ -48,6 +48,7 @@ module StackTrace
 
     def inherits_config?(klass, inherits: nil, **)
       inherits &&
+        klass.respond_to?(:ancestors) &&
         klass.ancestors.include?(inherits) &&
         klass != inherits
     end
