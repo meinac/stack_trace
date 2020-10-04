@@ -10,24 +10,34 @@ require "stack_trace/version"
 module StackTrace
   TRACED_EVENTS = %i(call c_call return c_return raise).freeze
 
-  def self.configure
-    yield configuration
-    trace_point.enable
-  end
+  class << self
+    def configure
+      yield configuration
+      trace_point.enable
+    end
 
-  def self.configuration
-    @configuration ||= Configuration.new
-  end
+    def configuration
+      @configuration ||= Configuration.new
+    end
 
-  def self.trace
-    return unless block_given?
+    def trace
+      return unless block_given?
 
-    Trace.start
-    yield
-  end
+      Trace.start
+      yield
+    end
 
-  def self.trace_point
-    @trace_point ||= TracePoint.new(*TRACED_EVENTS) { |tp| Trace.track(tp) }
+    def current
+      Trace.current
+    end
+
+    def as_json
+      Trace.as_json
+    end
+
+    def trace_point
+      @trace_point ||= TracePoint.new(*TRACED_EVENTS) { |tp| Trace.track(tp) }
+    end
   end
 end
 

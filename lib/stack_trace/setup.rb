@@ -2,9 +2,17 @@
 
 module StackTrace
   class Setup
-    def self.call(klass)
-      klass.singleton_class.stack_trace_setup = new(klass, :class_methods)
-      klass.stack_trace_setup = new(klass, :instance_methods)
+    class << self
+      def trackable?(mod, method_id)
+        store[mod].trace?(method_id)
+      end
+
+      def store
+        @store ||= Hash.new do |h, k|
+          h[k.singleton_class] = new(k, :class_methods)
+          h[k] = new(k, :instance_methods)
+        end
+      end
     end
 
     def initialize(klass, context)
