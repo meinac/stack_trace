@@ -1,5 +1,7 @@
 # frozen-string-literal: true
 
+require 'objspace'
+
 module StackTrace
   class Span
     class << self
@@ -36,6 +38,7 @@ module StackTrace
       self.parent = parent
       self.started_at = Time.now.to_f
       self.spans = []
+      self.start_object_counts = ObjectSpace.count_objects
     end
 
     def <<(span)
@@ -45,6 +48,7 @@ module StackTrace
     def close(trace_point)
       self.value = trace_point.return_value.inspect
       self.finished_at = Time.now.to_f
+      self.finish_object_counts = ObjectSpace.count_objects
       parent
     end
 
@@ -57,13 +61,15 @@ module StackTrace
         exception: exception_as_json,
         time: time,
         time_ms: time_ms,
+        object_counts: object_counts,
         spans: spans.map(&:as_json)
       }
     end
 
     private
 
-    attr_accessor :receiver, :method_name, :args, :value, :parent, :spans, :started_at, :finished_at
+    attr_accessor :receiver, :method_name, :args, :value, :parent, :spans,
+                  :started_at, :finished_at, :start_object_counts, :finish_object_counts
     attr_reader :exception
 
     def time
@@ -94,6 +100,12 @@ module StackTrace
 
     def time_ms
       time_ns / 1_000_000
+    end
+
+    def object_counts
+      finish_object_counts.each_with_object({}) do |(k, v), memo|
+        memo[k] = v - start_object_counts[k]
+      end
     end
   end
 end
