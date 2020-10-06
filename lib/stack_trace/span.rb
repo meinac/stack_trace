@@ -56,6 +56,7 @@ module StackTrace
         value: value,
         exception: exception_as_json,
         time: time,
+        time_ms: time_ms,
         spans: spans.map(&:as_json)
       }
     end
@@ -89,6 +90,10 @@ module StackTrace
 
     def time_ns
       (finished_at - started_at) * 1_000_000_000
+    end
+
+    def time_ms
+      time_ns / 1_000_000
     end
   end
 end
