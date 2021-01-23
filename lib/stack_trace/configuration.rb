@@ -7,7 +7,7 @@ module StackTrace
     CONFIG_ATTRIBUTES = {
       enabled: false,
       modules: {},
-      extract_parameters: false,
+      trace_parameters: false,
       trace_memory: false
     }
 
