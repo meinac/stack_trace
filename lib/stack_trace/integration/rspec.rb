@@ -11,10 +11,9 @@ RSpec.configuration.after(:suite) do
 end
 
 RSpec.configuration.around(:each) do |example|
-  StackTrace.trace do
-    example.run
-    StackTrace::Integration::Rspec.save_trace_for(example)
-  end
+  trace = StackTrace.trace { example.run }
+
+  StackTrace::Integration::Rspec.save_trace(example, trace)
 end
 
 module StackTrace
@@ -39,8 +38,8 @@ module StackTrace
           print_message
         end
 
-        def save_trace_for(example)
-          examples << example_data(example)
+        def save_trace(example, trace)
+          examples << example_data(example, trace)
         end
 
         private
@@ -65,9 +64,9 @@ module StackTrace
           @trace_file_name ||= Time.now.strftime('%d_%m_%Y %H_%M_%S.json')
         end
 
-        def example_data(example)
+        def example_data(example, trace)
           example.metadata.slice(*EXAMPLE_META_KEYS)
-                          .merge!(trace: Trace.current.as_json)
+                          .merge!(trace: trace.as_json)
         end
 
         def print_message

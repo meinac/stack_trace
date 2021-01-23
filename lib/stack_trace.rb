@@ -23,16 +23,7 @@ module StackTrace
     def trace
       return unless block_given?
 
-      Trace.start
-      yield
-    end
-
-    def current
-      Trace.current
-    end
-
-    def as_json
-      Trace.as_json
+      Trace.trace { yield }
     end
 
     def trace_point

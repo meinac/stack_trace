@@ -9,20 +9,26 @@ module StackTrace
     TRACE_RAISE_EVENT = :raise
 
     class << self
+      attr_reader :current
+
       def track(trace_point)
-        current.add(trace_point) if trackable?(trace_point)
+        current.add(trace_point) if current && trackable?(trace_point)
+      end
+
+      def trace(&block)
+        start
+        yield
+        current
+      ensure
+        finish
       end
 
       def start
-        @current = new
-      end
-
-      def current
         @current ||= new
       end
 
-      def as_json
-        current.as_json
+      def finish
+        @current = nil
       end
 
       private
