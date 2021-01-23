@@ -28,8 +28,13 @@ module StackTrace
         trace_point.parameters
                    .map(&:last)
                    .each_with_object({}) do |parameter, memo|
-                      memo[parameter] = trace_point.binding.eval(parameter.to_s).inspect
+                      memo[parameter] = extract_argument(trace_point, parameter)
                    end
+      end
+
+      def extract_argument(trace_point, parameter)
+        trace_point.binding.eval(parameter.to_s).inspect
+      rescue SyntaxError # This can happen as we are calling `eval` here!
       end
     end
 
