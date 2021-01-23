@@ -43,7 +43,7 @@ module StackTrace
     end
 
     def match_hash_config(config, klass)
-      inherits_config?(klass, config) || path_config?(klass, config)
+      inherits_config?(klass, **config) || path_config?(klass, **config)
     end
 
     def inherits_config?(klass, inherits: nil, **)
