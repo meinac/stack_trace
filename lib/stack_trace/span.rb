@@ -14,7 +14,7 @@ module StackTrace
         )
       end
 
-      def real_time
+      def monotonic_time
         Process.clock_gettime(Process::CLOCK_MONOTONIC, :nanosecond)
       end
 
@@ -53,7 +53,7 @@ module StackTrace
       self.method_name = method_name
       self.args = args
       self.parent = parent
-      self.started_at = self.class.real_time
+      self.started_at = self.class.monotonic_time
       self.spans = []
       self.start_object_counts = self.class.object_counts
     end
@@ -64,7 +64,7 @@ module StackTrace
 
     def close(trace_point)
       self.value = trace_point.return_value.inspect
-      self.finished_at = self.class.real_time
+      self.finished_at = self.class.monotonic_time
       self.finish_object_counts = self.class.object_counts
       parent
     end
