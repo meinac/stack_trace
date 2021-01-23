@@ -27,7 +27,7 @@ module StackTrace
       private
 
       def receiver(trace_point)
-        trace_point.binding.eval("self").to_s
+        trace_point.binding.eval("stack_trace_id")
       end
 
       def extract_arguments(trace_point)

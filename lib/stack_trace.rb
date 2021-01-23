@@ -1,7 +1,9 @@
 # frozen-string-literal: true
 
 require "stack_trace/configuration"
-require "stack_trace/module_extensions"
+require "stack_trace/extensions/module"
+require "stack_trace/extensions/object"
+require "stack_trace/extensions/active_record/relation"
 require "stack_trace/setup"
 require "stack_trace/span"
 require "stack_trace/trace"
