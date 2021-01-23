@@ -7,6 +7,9 @@ module StackTrace
         store[mod].trace?(method_id)
       end
 
+      # We can not store this information
+      # in the module itself because the module can
+      # get frozen at some point!
       def store
         @store ||= Hash.new do |h, k|
           h[k.singleton_class] = new(k, :class_methods)
