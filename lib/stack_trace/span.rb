@@ -56,6 +56,7 @@ module StackTrace
       self.started_at = self.class.monotonic_time
       self.spans = []
       self.start_object_counts = self.class.object_counts
+      self.finish_object_counts = {}
     end
 
     def <<(span)
@@ -113,6 +114,13 @@ module StackTrace
 
     def time_ns
       @time_ns ||= (finished_at - started_at)
+    end
+
+    # Somehow we are calling the `as_json` method
+    # without closing the span. So we should add this here
+    # until we find the reason for it.
+    def finished_at
+      @finished_at || self.class.monotonic_time
     end
 
     def time_ms
