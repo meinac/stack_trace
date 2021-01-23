@@ -14,6 +14,10 @@ module StackTrace
         )
       end
 
+      def real_time
+        Process.clock_gettime(Process::CLOCK_MONOTONIC, :nanosecond)
+      end
+
       private
 
       def receiver(trace_point)
@@ -36,7 +40,7 @@ module StackTrace
       self.method_name = method_name
       self.args = args
       self.parent = parent
-      self.started_at = Time.now.to_f
+      self.started_at = self.class.real_time
       self.spans = []
       self.start_object_counts = ObjectSpace.count_objects
     end
@@ -47,7 +51,7 @@ module StackTrace
 
     def close(trace_point)
       self.value = trace_point.return_value.inspect
-      self.finished_at = Time.now.to_f
+      self.finished_at = self.class.real_time
       self.finish_object_counts = ObjectSpace.count_objects
       parent
     end
@@ -95,7 +99,7 @@ module StackTrace
     end
 
     def time_ns
-      (finished_at - started_at) * 1_000_000_000
+      @time_ns ||= (finished_at - started_at)
     end
 
     def time_ms
