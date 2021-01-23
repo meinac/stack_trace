@@ -49,7 +49,7 @@ module StackTrace
       when Array
         method_config.include?(method_id)
       when Symbol
-        method_config != :skip_inherited || instance_methods(false).include?(method_id)
+        method_config != :skip_inherited || klass.instance_methods(false).include?(method_id)
       when Regexp
         method_id =~ method_config
       end
