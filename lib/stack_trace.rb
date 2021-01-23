@@ -39,6 +39,8 @@ module StackTrace
       @trace_point ||= TracePoint.new(*TRACED_EVENTS) { |tp| Trace.track(tp) }
     end
 
+    # This is necessary to find the source location
+    # of all the modules/classes defined.
     def setup!
       TracePoint.new(:class) do |tp|
         tp.binding.eval <<~RUBY
