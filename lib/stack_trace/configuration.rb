@@ -7,6 +7,7 @@ module StackTrace
     CONFIG_ATTRIBUTES = {
       enabled: false,
       modules: {},
+      extract_parameters: false
     }
 
     attr_writer *CONFIG_ATTRIBUTES.keys

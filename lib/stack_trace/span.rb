@@ -25,6 +25,8 @@ module StackTrace
       end
 
       def extract_arguments(trace_point)
+        return {} unless StackTrace.configuration.extract_parameters
+
         trace_point.parameters
                    .map(&:last)
                    .each_with_object({}) do |parameter, memo|
