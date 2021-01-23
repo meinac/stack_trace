@@ -44,7 +44,7 @@ module StackTrace
     def setup!
       TracePoint.new(:class) do |tp|
         tp.binding.eval <<~RUBY
-          self.stack_trace_source_location = binding.source_location
+          self.stack_trace_source_location = binding.source_location.first
         RUBY
       end.enable
     end
