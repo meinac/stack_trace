@@ -56,15 +56,15 @@ end
 
 - `:all` to trace all methods
 - `:skip_inherited` to trace only the methods defined in module/class
-- `:path` to trace all the classes/modules defined in a specific path regex(Make sure that StackTrace gem is loaded into memory before any files to use this configuration)
 - Array of symbols to specify method names one by one
-- Regular expression to trace all methods with matching method names
+- Regexp to trace all methods matching the given regular expression
 
 Also the keys for `modules` hash can have the following values;
 
 - `Class/Module` to trace methods of given value
 - An array of `Class/Module` to trace methods of all given values
-- Regular expression to trace methods of all matching modules or classes.
+- Regular expression to trace methods of all matching modules or classes
+- { path: "..." } to trace all the modules/classes loaded from a specific path
 - { inherits: Class } to trace methods of all classes inherited from base class.
 
 Here are the example usages;
@@ -76,31 +76,27 @@ StackTrace.configure do |config|
       Foo => { instance_methods: :skip_inherited },
       [Too, Joo] => { class_methods: :all }
       /Ba.*/ => { instance_methods: :all },
-      { inherits: Zoo } => { instance_methods: [:foo, :bar, :zoo] }
+      { inherits: Zoo } => { instance_methods: [:foo, :bar, :zoo] },
+      { path: Rails.root.join('app', 'models').to_s => { instance_methods: :all }
   }
 end
 ```
 
 #### Tracing
 
-After configuring the StackTrace, you can call `StackTrace::trace` method to create a tracing information of the code execution as shown below;
+After configuring the StackTrace, you can call `StackTrace::trace` method to create a tracing information, like so;
 
 ```ruby
-StackTrace.trace do
-  foo = Foo.new
-  foo.do_something
- end
+  StackTrace.trace { Math.sqrt(4) } # => #<StackTrace::Trace:0x00007f97b29643c0...
 ```
 
 #### Getting tracing information
 
-Currently StackTrace gem provides tracing information as a Ruby `Hash` object. You can use `StackTrace::Trace::as_json` method to receive the `Hash` for the current trace like so;
+Currently StackTrace gem provides tracing information as a Ruby `Hash` object. You can use `StackTrace::Trace#as_json` method to receive the `Hash` for the current trace, like so;
 
 ```ruby
-  StackTrace.trace do
-    # Do something usefull
-    StackTrace::Trace.as_json
-  end
+  trace = StackTrace.trace { 1 + 1 }
+  trace.as_json # => # { .... }
 ```
 
 #### What does StackTrace collect?
