@@ -4,6 +4,8 @@ require "securerandom"
 
 module StackTrace
   class Trace
+    include Presenter
+
     TRACE_START_EVENTS = %i(call c_call).freeze
     TRACE_END_EVENTS = %i(return c_return).freeze
     TRACE_RAISE_EVENT = :raise
@@ -55,13 +57,6 @@ module StackTrace
       else
         apply_exception_to_current_span(trace_point)
       end
-    end
-
-    def as_json
-      {
-        uuid: uuid,
-        spans: spans.map(&:as_json)
-      }
     end
 
     def <<(span)
