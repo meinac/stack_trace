@@ -31,7 +31,7 @@ module StackTrace
       end
 
       def extract_arguments(trace_point)
-        return {} unless StackTrace.configuration.trace_parameters
+        return {} unless StackTrace.configuration.trace_parameters && trace_point.event == :call
 
         trace_point.parameters
                    .map(&:last)
