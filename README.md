@@ -37,7 +37,7 @@ Using StackTrace gem is pretty straight forward. First you should configure it t
 
 #### Configuration
 
-With the belove configuration, StackTrace will trace all the methods of **Foo** `module/class` and only the `zoo` method of **Bar** `module/class`.
+With the below configuration, StackTrace will trace all the methods of **Foo** `module/class` and only the `zoo` method of **Bar** `module/class`.
 
 ```ruby
 StackTrace.configure do |config|
@@ -79,6 +79,20 @@ StackTrace.configure do |config|
       { inherits: Zoo } => { instance_methods: [:foo, :bar, :zoo] },
       { path: Rails.root.join('app', 'models').to_s => { instance_methods: :all }
   }
+end
+```
+
+##### Other configuration keys
+
+Here are the other configuration keys to change the behavior of `StackTrace`;
+
+```ruby
+StackTrace.configure do |config|
+  config.ruby_calls = false # default `true`
+  config.c_calls = false # default `true`
+  config.trace_parameters = true # default `false`
+  config.trace_memory = true # default `false`
+  config.output_dir = '....' # default `__FILE__/stack_trace/`
 end
 ```
 
