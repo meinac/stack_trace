@@ -1,7 +1,5 @@
 # frozen-string-literal: true
 
-require 'objspace'
-
 module StackTrace
   class Span
     class << self
@@ -12,16 +10,6 @@ module StackTrace
           extract_arguments(trace_point),
           parent
         )
-      end
-
-      def monotonic_time
-        Process.clock_gettime(Process::CLOCK_MONOTONIC, :nanosecond)
-      end
-
-      def object_counts
-        return {} unless StackTrace.configuration.trace_memory
-
-        ObjectSpace.count_objects
       end
 
       private
@@ -53,9 +41,9 @@ module StackTrace
       self.method_name = method_name
       self.args = args
       self.parent = parent
-      self.started_at = self.class.monotonic_time
+      self.started_at = Utils.monotonic_time
       self.spans = []
-      self.start_object_counts = self.class.object_counts
+      self.start_object_counts = Utils.object_counts
       self.finish_object_counts = {}
     end
 
@@ -65,8 +53,8 @@ module StackTrace
 
     def close(trace_point)
       self.value = trace_point.return_value.inspect
-      self.finished_at = self.class.monotonic_time
-      self.finish_object_counts = self.class.object_counts
+      self.finished_at = Utils.monotonic_time
+      self.finish_object_counts = Utils.object_counts
       parent
     end
 
