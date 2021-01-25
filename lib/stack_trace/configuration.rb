@@ -8,7 +8,8 @@ module StackTrace
       enabled: false,
       modules: {},
       trace_parameters: false,
-      trace_memory: false
+      trace_memory: false,
+      output_dir: File.expand_path("stack_trace")
     }
 
     attr_writer *CONFIG_ATTRIBUTES.keys
