@@ -9,14 +9,18 @@ module StackTrace
       modules: {},
       trace_parameters: false,
       trace_memory: false,
-      output_dir: File.expand_path("stack_trace")
+      output_dir: File.expand_path("stack_trace"),
+      ruby_calls: true,
+      c_calls: true
     }
 
     attr_writer *CONFIG_ATTRIBUTES.keys
 
     CONFIG_ATTRIBUTES.each do |attr_name, default_value|
       define_method(attr_name) do
-        instance_variable_get("@#{attr_name}") || default_value
+        config_value = instance_variable_get("@#{attr_name}")
+
+        config_value.nil? ? default_value : config_value
       end
     end
 

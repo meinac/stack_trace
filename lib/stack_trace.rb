@@ -12,12 +12,14 @@ require "stack_trace/trace"
 require "stack_trace/version"
 
 module StackTrace
-  TRACED_EVENTS = %i(call c_call return c_return raise).freeze
+  RB_METHOD_EVENTS = %i(call return raise).freeze
+  C_METHOD_EVENTS = %i(c_call c_return raise).freeze
 
   class << self
     def configure
       yield configuration
-      trace_point.enable
+
+      trace_point&.enable
     end
 
     def configuration
@@ -31,7 +33,9 @@ module StackTrace
     end
 
     def trace_point
-      @trace_point ||= TracePoint.new(*TRACED_EVENTS) { |tp| Trace.track(tp) }
+      return if traced_events.empty?
+
+      @trace_point ||= TracePoint.new(*traced_events) { |tp| Trace.track(tp) }
     end
 
     # This is necessary to find the source location
@@ -42,6 +46,17 @@ module StackTrace
           self.stack_trace_source_location = binding.source_location.first
         RUBY
       end.enable
+    end
+
+    private
+
+    def traced_events
+      @traced_events ||= begin
+        [].tap do |events|
+          events.append(*RB_METHOD_EVENTS) if configuration.ruby_calls
+          events.append(*C_METHOD_EVENTS) if configuration.c_calls
+        end.uniq
+      end
     end
   end
 end
