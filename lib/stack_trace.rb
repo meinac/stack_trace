@@ -9,6 +9,7 @@ require "stack_trace/presenter"
 require "stack_trace/setup"
 require "stack_trace/span"
 require "stack_trace/trace"
+require "stack_trace/utils"
 require "stack_trace/version"
 
 module StackTrace
