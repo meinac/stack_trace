@@ -1,6 +1,6 @@
 # StackTrace
 
-StackTrace traces method calls in your application which can give you an overview about how your application works, which objects depends on which ones and what are the bottlenecks.
+adasStackTrace traces method calls in your application which can give you an overview about how your application works, which objects depends on which ones and what are the bottlenecks.
 
 ## Installation
 
