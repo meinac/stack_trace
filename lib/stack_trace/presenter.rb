@@ -12,6 +12,10 @@ module StackTrace
       }
     end
 
+    def as_html
+      Html.new(as_json).write_file
+    end
+
     def persist
       Persistence.save(file_data)
     end
