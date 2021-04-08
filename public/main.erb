@@ -21,7 +21,7 @@
         </thead>
         <tbody class="panel">
           <% @trace[:spans].each_with_index  do |item, idx| %>
-              <%= something(item, idx) %>
+              <%= print_table(item, idx) %>
           <%end %>
         </tbody>
       </table>
