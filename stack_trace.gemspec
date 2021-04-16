@@ -25,6 +25,7 @@ Gem::Specification.new do |spec|
 
   spec.required_ruby_version = '>= 1.9.2'
 
+  spec.add_runtime_dependency  "graphviz", '~> 1.2', '>= 1.2.1'
   spec.add_development_dependency "bundler", "~> 2.0"
   spec.add_development_dependency "rake", "~> 13.0"
   spec.add_development_dependency "rspec", "~> 3.0"
