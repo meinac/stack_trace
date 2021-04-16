@@ -1,28 +1,24 @@
-require 'json'
-require 'erb'
 
 module StackTrace
   module Presenter
-    class Html
+    module Html
+      class ListView < AbstractView
        include ERB::Util
 
-       attr_reader :erb, :trace
+       attr_reader :erb, :spans, :uuid
 
-       def initialize(trace)
-         erb_file = File.expand_path './public/main.erb'
-         @erb = ERB.new(File.read(erb_file))
-         @trace = trace
+       VIEW_FILE = File.expand_path './public/list.erb'
+
+       def initialize(spans, uuid)
+         @erb = ERB.new(File.read(VIEW_FILE))
+         @spans = spans
+         @uuid = uuid
        end
 
        def span_row(span, class_id=0)
          <<-HTML
           <tr class="collapsed" data-bs-toggle="collapse" aria-expanded="false"  data-bs-target="#demo#{class_id}">
-            <td>  #{html_escape(span[:receiver])} </td>
-            <td>  #{html_escape(span[:method_name])} </td>
-            <td>  #{html_escape(span[:arguments])} </td>
-            <td>  #{html_escape(span[:value])} </td>
-            <td>  #{html_escape(span[:exception])} </td>
-            <td>  #{html_escape(span[:time])} </td>
+            #{build_rows(span).join('')}
           </tr>
          HTML
        end
@@ -30,12 +26,7 @@ module StackTrace
        def span_child_row(span, parent_class_id)
          <<-HTML
           <tr id=demo#{parent_class_id} class="accordion-collapse collapse">
-            <td>  #{html_escape(span[:receiver])} </td>
-            <td>  #{html_escape(span[:method_name])} </td>
-            <td>  #{html_escape(span[:arguments])} </td>
-            <td>  #{html_escape(span[:value])} </td>
-            <td>  #{html_escape(span[:exception])} </td>
-            <td>  #{html_escape(span[:time])} </td>
+            #{build_rows(span).join('')}
           </tr>
          HTML
        end
@@ -45,6 +36,12 @@ module StackTrace
 
          iterate_tree(span, idx)
        end
+
+       def build
+        write_file("#{uuid}.html")
+       end
+
+       private
 
        def iterate_tree(node, id_idx)
          queue = []
@@ -69,13 +66,29 @@ module StackTrace
          res.join('')
        end
 
+       def build_rows(span)
+        fields = {
+          receiver: -> (val) { val },
+          method_name: -> (val) { val },
+          arguments: -> (val) { val },
+          value: -> (val) { val },
+          exception: -> (val) { val },
+          time: -> (val) { val }
+        }
+
+        fields.map do |field, formatter|
+          "<td>  #{html_escape(formatter.(span[field]))} </td>"
+        end
+       end
+
        def content
          erb.result(binding)
        end
 
-       def write_file(output='report.html')
-         File.write(output, content)
+       def write_file(output)
+         File.write("list-#{output}", content)
        end
      end
+    end
   end
 end

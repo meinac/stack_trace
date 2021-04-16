@@ -13,7 +13,7 @@ module StackTrace
     end
 
     def as_html
-      Html.new(as_json).write_file
+      Html::MainView.new(as_json).build
     end
 
     def persist
