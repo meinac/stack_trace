@@ -4,22 +4,22 @@ require "bundler/setup"
 require "stack_trace"
 
 class Foo
-    def say_hi
-        'hi'
-    end
+  def say_hi
+    "hi"
+  end
 end
 
 class Bar
-    def adapter_hi
-        Foo.new.say_hi
-    end
+  def adapter_hi
+    Foo.new.say_hi
+  end
 end
 
 StackTrace.configure do |config|
   config.enabled = true
   config.modules = {
-      Foo => { instance_methods: :all, class_methods: :all },
-      Bar => { instance_methods: :all, class_methods: :all },
+    Foo => { instance_methods: :all, class_methods: :all },
+    Bar => { instance_methods: :all, class_methods: :all },
   }
 end
 
@@ -27,5 +27,4 @@ trace = StackTrace.trace do
     Bar.new.adapter_hi
 end
 
-trace.persist
 trace.as_html
