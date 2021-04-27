@@ -1,5 +1,6 @@
 # frozen-string-literal: true
-require 'stringio'
+
+require "stringio"
 
 module StackTrace
   class Persistence
@@ -25,7 +26,7 @@ module StackTrace
       end
 
       def trace_file_name
-        Time.now.strftime('%d_%m_%Y_%H_%M_%S.json')
+        Time.now.strftime("%d_%m_%Y_%H_%M_%S.json")
       end
 
       def root_path

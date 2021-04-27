@@ -15,12 +15,12 @@ end
 module StackTrace
   module Integration
     class Rspec
-      EXAMPLE_META_KEYS = %i(file_path line_number scoped_id description full_description)
+      EXAMPLE_META_KEYS = %i[file_path line_number scoped_id description full_description].freeze
       FINAL_MESSAGE = <<~TEXT
         \e[1m
         StackTrace:
 
-        Trace information is saved into \e[32m%{file_path}\e[0m
+        Trace information is saved into \e[32m%<file_path>s\e[0m
         \e[22m
       TEXT
 
@@ -42,7 +42,7 @@ module StackTrace
 
         def example_data(example, trace)
           example.metadata.slice(*EXAMPLE_META_KEYS)
-                          .merge!(trace: trace.as_json)
+                 .merge!(trace: trace.as_json)
         end
 
         def print_message(path)

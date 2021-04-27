@@ -1,0 +1,17 @@
+Gemspec/RequiredRubyVersion:
+  Enabled: false
+
+Metrics/MethodLength:
+  CountAsOne:
+    - hash
+    - array
+
+Style/Documentation:
+  Enabled: false
+
+Style/FrozenStringLiteralComment:
+  Exclude:
+    - bin/*
+
+Style/StringLiterals:
+  EnforcedStyle: double_quotes

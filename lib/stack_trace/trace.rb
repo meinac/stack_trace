@@ -6,8 +6,8 @@ module StackTrace
   class Trace
     include Presenter
 
-    TRACE_START_EVENTS = %i(call c_call).freeze
-    TRACE_END_EVENTS = %i(return c_return).freeze
+    TRACE_START_EVENTS = %i[call c_call].freeze
+    TRACE_END_EVENTS = %i[return c_return].freeze
     TRACE_RAISE_EVENT = :raise
 
     class << self
@@ -17,7 +17,7 @@ module StackTrace
         current.add(trace_point) if current && trackable?(trace_point)
       end
 
-      def trace(&block)
+      def trace
         start
         yield
         current
@@ -26,7 +26,7 @@ module StackTrace
       end
 
       def start
-        @current ||= new
+        @current ||= new # rubocop:disable Naming/MemoizedInstanceVariableName
       end
 
       def finish

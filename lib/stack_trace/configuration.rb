@@ -12,9 +12,9 @@ module StackTrace
       output_dir: File.expand_path("stack_trace"),
       ruby_calls: true,
       c_calls: true
-    }
+    }.freeze
 
-    attr_writer *CONFIG_ATTRIBUTES.keys
+    attr_writer(*CONFIG_ATTRIBUTES.keys)
 
     CONFIG_ATTRIBUTES.each do |attr_name, default_value|
       define_method(attr_name) do

@@ -24,13 +24,14 @@ module StackTrace
         trace_point.parameters
                    .map(&:last)
                    .each_with_object({}) do |parameter, memo|
-                      memo[parameter] = extract_argument(trace_point, parameter)
+                     memo[parameter] = extract_argument(trace_point, parameter)
                    end
       end
 
       def extract_argument(trace_point, parameter)
         trace_point.binding.eval(parameter.to_s).inspect
       rescue SyntaxError # This can happen as we are calling `eval` here!
+        puts "SyntaxError happened!"
       end
     end
 
@@ -75,8 +76,9 @@ module StackTrace
     private
 
     attr_accessor :receiver, :method_name, :args, :value, :parent, :spans,
-                  :started_at, :finished_at, :start_object_counts, :finish_object_counts
+                  :started_at, :start_object_counts, :finish_object_counts
     attr_reader :exception
+    attr_writer :finished_at
 
     def time
       case time_ns

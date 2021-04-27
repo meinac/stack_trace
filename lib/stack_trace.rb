@@ -14,8 +14,8 @@ require "stack_trace/utils"
 require "stack_trace/version"
 
 module StackTrace
-  RB_METHOD_EVENTS = %i(call return raise).freeze
-  C_METHOD_EVENTS = %i(c_call c_return raise).freeze
+  RB_METHOD_EVENTS = %i[call return raise].freeze
+  C_METHOD_EVENTS = %i[c_call c_return raise].freeze
 
   class << self
     def configure
@@ -28,10 +28,10 @@ module StackTrace
       @configuration ||= Configuration.new
     end
 
-    def trace
+    def trace(&block)
       return unless block_given?
 
-      Trace.trace { yield }
+      Trace.trace(&block)
     end
 
     def trace_point
@@ -53,12 +53,10 @@ module StackTrace
     private
 
     def traced_events
-      @traced_events ||= begin
-        [].tap do |events|
-          events.append(*RB_METHOD_EVENTS) if configuration.ruby_calls
-          events.append(*C_METHOD_EVENTS) if configuration.c_calls
-        end.uniq
-      end
+      @traced_events ||= [].tap do |events|
+        events.append(*RB_METHOD_EVENTS) if configuration.ruby_calls
+        events.append(*C_METHOD_EVENTS) if configuration.c_calls
+      end.uniq
     end
   end
 end

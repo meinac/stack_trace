@@ -1,3 +1,5 @@
+# frozen-string-literal: true
+
 require "bundler/setup"
 require "stack_trace"
 

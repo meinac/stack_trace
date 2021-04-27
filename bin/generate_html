@@ -19,12 +19,12 @@ StackTrace.configure do |config|
   config.enabled = true
   config.modules = {
     Foo => { instance_methods: :all, class_methods: :all },
-    Bar => { instance_methods: :all, class_methods: :all },
+    Bar => { instance_methods: :all, class_methods: :all }
   }
 end
 
 trace = StackTrace.trace do
-    Bar.new.adapter_hi
+  Bar.new.adapter_hi
 end
 
 trace.as_html

@@ -1,6 +1,6 @@
 # frozen-string-literal: true
 
-require 'objspace'
+require "objspace"
 
 module StackTrace
   class Utils
