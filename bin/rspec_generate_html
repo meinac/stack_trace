@@ -1,0 +1,38 @@
+#!/usr/bin/env ruby
+
+require "bundler/setup"
+require "rspec"
+require "stack_trace"
+require "stack_trace/integration/rspec"
+require "ostruct"
+
+metadata = { file_path: "./", line_number: 12, scoped_id: 12, description: "text", full_description: "test" }
+tmp = OpenStruct.new(metadata: metadata)
+# example = OpenStruct.new(tmp)
+class Foo
+  def say_hi
+    "hi"
+  end
+end
+
+class Bar
+  def adapter_hi
+    Foo.new.say_hi
+  end
+end
+
+StackTrace.configure do |config|
+  config.enabled = true
+  config.modules = {
+    Foo => { instance_methods: :all, class_methods: :all },
+    Bar => { instance_methods: :all, class_methods: :all }
+  }
+end
+
+trace = StackTrace.trace do
+  Bar.new.adapter_hi
+end
+
+StackTrace::Integration::Rspec.store_trace(tmp, trace)
+StackTrace::Integration::Rspec.store_trace(tmp, trace)
+StackTrace::Integration::Rspec.finish_tracing
