@@ -17,7 +17,7 @@ module StackTrace
 
       def write_data(data, file_path)
         File.open(file_path, "w") do |f|
-          StringIO.new(data.to_json).each(WRITE_BATCH_SIZE) { |d| f << d } && f.path
+          StringIO.new(data).each(WRITE_BATCH_SIZE) { |d| f << d } && f.path
         end
       end
 

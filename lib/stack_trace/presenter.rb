@@ -17,7 +17,7 @@ module StackTrace
     end
 
     def persist
-      Persistence.save(file_data, :json)
+      Persistence.save(file_data.to_json, :json)
     end
 
     private

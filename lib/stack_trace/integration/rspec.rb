@@ -26,7 +26,7 @@ module StackTrace
 
       class << self
         def finish_tracing
-          Persistence.save(examples, :json)
+          Persistence.save(examples.to_json, :json)
                      .then { |path| print_message(path) }
         end
 
