@@ -13,7 +13,9 @@ module StackTrace
     end
 
     def as_html
-      Html.new(as_json).write_file
+      html_content = Html.new(as_json).content
+
+      Persistence.save(html_content, :html)
     end
 
     def persist

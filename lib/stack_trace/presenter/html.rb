@@ -76,10 +76,6 @@ module StackTrace
       def content
         erb.result(binding)
       end
-
-      def write_file(output = "report.html")
-        File.write(output, content)
-      end
     end
   end
 end
