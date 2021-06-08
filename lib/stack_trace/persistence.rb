@@ -7,10 +7,11 @@ module StackTrace
     WRITE_BATCH_SIZE = 1_000
 
     class << self
-      def save(data)
+      def save(data, extension)
         create_tracing_directory
+        file_path = tracing_file_path(extension)
 
-        File.open(tracing_file_path, "w") do |f|
+        File.open(file_path, "w") do |f|
           StringIO.new(data.to_json).each(WRITE_BATCH_SIZE) { |d| f << d } && f.path
         end
       end
@@ -21,12 +22,12 @@ module StackTrace
         Dir.mkdir(root_path) unless Dir.exist?(root_path)
       end
 
-      def tracing_file_path
-        File.join(root_path, trace_file_name)
+      def tracing_file_path(extension)
+        File.join(root_path, trace_file_name(extension))
       end
 
-      def trace_file_name
-        Time.now.strftime("%d_%m_%Y_%H_%M_%S.json")
+      def trace_file_name(extension)
+        Time.now.strftime("%d_%m_%Y_%H_%M_%S.#{extension}")
       end
 
       def root_path
