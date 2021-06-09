@@ -13,7 +13,7 @@ module StackTrace
     end
 
     def as_html
-      html_content = Html.new(as_json).content
+      html_content = Html.new([file_data]).content
 
       Persistence.save(html_content, :html)
     end

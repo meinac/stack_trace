@@ -27,4 +27,4 @@ trace = StackTrace.trace do
   Bar.new.adapter_hi
 end
 
-trace.as_html
+puts trace.as_html
