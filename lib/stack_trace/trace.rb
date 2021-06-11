@@ -63,6 +63,11 @@ module StackTrace
       spans << span
     end
 
+    # TODO: This shouldn't happen but happens :/
+    def close(*)
+      self
+    end
+
     private
 
     def create_new_span(trace_point)

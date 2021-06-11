@@ -26,7 +26,7 @@ module StackTrace
 
       class << self
         def finish_tracing
-          Persistence.save(examples.to_json, :json)
+          Persistence.save(html_content, :html)
                      .then { |path| print_message(path) }
         end
 
@@ -35,6 +35,10 @@ module StackTrace
         end
 
         private
+
+        def html_content
+          Presenter::Html.new(examples).content
+        end
 
         def examples
           @examples ||= []

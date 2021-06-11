@@ -11,7 +11,8 @@ tmp = OpenStruct.new(metadata: metadata)
 # example = OpenStruct.new(tmp)
 class Foo
   def say_hi
-    "hi"
+    Zoo.say_hi
+    Zoo.say_hi
   end
 end
 
@@ -21,11 +22,29 @@ class Bar
   end
 end
 
+class Zoo
+  def self.say_hi
+    Baz.say_hi
+  end
+
+  def self.get_text
+    "hi"
+  end
+end
+
+module Baz
+  def self.say_hi
+    Zoo.get_text
+  end
+end
+
 StackTrace.configure do |config|
   config.enabled = true
   config.modules = {
     Foo => { instance_methods: :all, class_methods: :all },
-    Bar => { instance_methods: :all, class_methods: :all }
+    Bar => { instance_methods: :all, class_methods: :all },
+    Zoo => { instance_methods: :all, class_methods: :all },
+    Baz => { instance_methods: :all, class_methods: :all }
   }
 end
 

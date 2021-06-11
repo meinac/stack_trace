@@ -6,6 +6,7 @@ module StackTrace
       def start_from(trace_point, parent)
         new(
           receiver(trace_point),
+          trace_point.defined_class,
           trace_point.method_id,
           extract_arguments(trace_point),
           parent
@@ -37,8 +38,9 @@ module StackTrace
 
     attr_writer :exception
 
-    def initialize(receiver, method_name, args, parent)
+    def initialize(receiver, defined_class, method_name, args, parent)
       self.receiver = receiver
+      self.defined_class = defined_class
       self.method_name = method_name
       self.args = args
       self.parent = parent
@@ -62,6 +64,7 @@ module StackTrace
     def as_json
       {
         receiver: receiver,
+        defined_class: defined_class,
         method_name: method_name,
         arguments: args,
         value: value,
@@ -75,7 +78,7 @@ module StackTrace
 
     private
 
-    attr_accessor :receiver, :method_name, :args, :value, :parent, :spans,
+    attr_accessor :receiver, :defined_class, :method_name, :args, :value, :parent, :spans,
                   :started_at, :start_object_counts, :finish_object_counts
     attr_reader :exception
     attr_writer :finished_at
