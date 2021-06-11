@@ -28,9 +28,12 @@ RSpec.describe StackTrace::Extensions::Module do
 
     context "when the module does not have a name" do
       let(:mod) { Class.new }
-      let(:mod_id_in_hex) { format('0x%016x', (mod.object_id << 1)) }
 
-      it { is_expected.to eq("#<Class:#{mod_id_in_hex}>") }
+      before do
+        allow(mod).to receive(:stack_trace_id).and_return("#<Class:0x...")
+      end
+
+      it { is_expected.to eq("#<Class:0x...") }
     end
   end
 end
