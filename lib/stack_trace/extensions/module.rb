@@ -10,7 +10,7 @@ module StackTrace
       end
 
       def stack_trace_id
-        singleton_class? ? inspect : name
+        name || inspect
       end
     end
   end
