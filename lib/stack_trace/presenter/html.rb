@@ -6,7 +6,7 @@ require "erb"
 module StackTrace
   module Presenter
     class Html
-      LAYOUT_FILE = "./public/main.html.erb"
+      LAYOUT_FILE = "../../public/main.html.erb"
 
       attr_reader :trace
 
@@ -29,7 +29,11 @@ module StackTrace
       end
 
       def layout_path
-        File.expand_path(LAYOUT_FILE)
+        File.expand_path(LAYOUT_FILE, root_path)
+      end
+
+      def root_path
+        File.dirname(__dir__)
       end
     end
   end
