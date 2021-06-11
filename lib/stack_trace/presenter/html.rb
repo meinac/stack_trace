@@ -15,10 +15,15 @@ module StackTrace
       end
 
       def content
-        erb.result_with_hash({ trace_data: trace.to_json })
+        erb.result_with_hash({ trace_data: trace_data })
       end
 
       private
+
+      def trace_data
+        # We shouldn't use `to_json` as it is overridden by ActiveSupport.
+        JSON.generate(trace)
+      end
 
       def erb
         ERB.new(layout)
