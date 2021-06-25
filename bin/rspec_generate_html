@@ -27,14 +27,14 @@ class Zoo
     Baz.say_hi
   end
 
-  def self.get_text
+  def self.text
     "hi"
   end
 end
 
 module Baz
   def self.say_hi
-    Zoo.get_text
+    Zoo.text
   end
 end
 

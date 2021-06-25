@@ -5,6 +5,9 @@ Metrics/BlockLength:
   Exclude:
     - spec/**/*
 
+Metrics/ClassLength:
+  Max: 120
+
 Metrics/MethodLength:
   CountAsOne:
     - hash
