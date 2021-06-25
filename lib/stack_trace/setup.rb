@@ -12,15 +12,13 @@ module StackTrace
       # modules.
       def store
         @store ||= Hash.new do |h, k|
-          h[k.singleton_class] = new(k, :class_methods)
-          h[k] = new(k, :instance_methods)
+          h[k] = new(k)
         end
       end
     end
 
-    def initialize(klass, context)
+    def initialize(klass)
       self.klass = klass
-      self.context = context
     end
 
     def trace?(method_id)
@@ -29,7 +27,7 @@ module StackTrace
 
     private
 
-    attr_accessor :klass, :context
+    attr_accessor :klass
 
     def enabled?
       defined?(@enabled) ? @enabled : (@enabled = !config.nil?)
@@ -60,6 +58,10 @@ module StackTrace
 
     def method_config
       @method_config ||= config[1].fetch(context, [])
+    end
+
+    def context
+      klass.singleton_class? ? :class_methods : :instance_methods
     end
   end
 end
