@@ -8,8 +8,8 @@ module StackTrace
       end
 
       # We can not store this information
-      # in the module itself because the module can
-      # get frozen at some point!
+      # in the module itself for the frozen
+      # modules.
       def store
         @store ||= Hash.new do |h, k|
           h[k.singleton_class] = new(k, :class_methods)
