@@ -11,9 +11,7 @@ module StackTrace
       # in the module itself for the frozen
       # modules.
       def store
-        @store ||= Hash.new do |h, k|
-          h[k] = new(k)
-        end
+        @store ||= Hash.new { |h, k| h[k] = new(k) }
       end
     end
 
