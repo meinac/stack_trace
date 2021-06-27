@@ -1,6 +1,7 @@
 # frozen-string-literal: true
 
 require "objspace"
+require "securerandom"
 
 module StackTrace
   class Utils
@@ -13,6 +14,10 @@ module StackTrace
         return {} unless StackTrace.configuration.trace_memory
 
         ObjectSpace.count_objects
+      end
+
+      def uuid
+        SecureRandom.uuid
       end
     end
   end

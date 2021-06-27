@@ -18,6 +18,8 @@ GEM
       method_source (~> 0.9.0)
     rainbow (3.0.0)
     rake (13.0.1)
+    rake-compiler (1.1.1)
+      rake
     regexp_parser (2.1.1)
     rexml (3.2.5)
     rspec (3.8.0)
@@ -54,6 +56,7 @@ DEPENDENCIES
   bundler (~> 2.0)
   pry
   rake (~> 13.0)
+  rake-compiler
   rspec (~> 3.0)
   rubocop (~> 1.13.0)
   stack_trace!

@@ -1,7 +1,5 @@
 # frozen-string-literal: true
 
-require "securerandom"
-
 module StackTrace
   class Trace
     include Presenter
@@ -44,7 +42,7 @@ module StackTrace
     attr_reader :uuid, :spans
 
     def initialize
-      @uuid = SecureRandom.uuid
+      @uuid = Utils.uuid
       @spans = []
     end
 
