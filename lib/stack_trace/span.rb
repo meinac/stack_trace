@@ -5,7 +5,7 @@ module StackTrace
     class << self
       def start_from(trace_point, parent)
         new(
-          receiver(trace_point),
+          trace_point.self.stack_trace_id,
           trace_point.defined_class,
           trace_point.method_id,
           extract_arguments(trace_point),
@@ -14,10 +14,6 @@ module StackTrace
       end
 
       private
-
-      def receiver(trace_point)
-        trace_point.binding.eval("stack_trace_id")
-      end
 
       def extract_arguments(trace_point)
         return {} unless StackTrace.configuration.trace_parameters && trace_point.event == :call
