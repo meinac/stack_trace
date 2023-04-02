@@ -22,6 +22,7 @@ Gem::Specification.new do |spec|
     end
   end
   spec.bindir = "exe"
+  spec.extensions = %w[ext/stack_trace/extconf.rb]
   spec.executables = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
