@@ -18,10 +18,21 @@ static VALUE listen_events(VALUE data, VALUE m, int _argc, const VALUE *_argv, V
   return Qtrue;
 }
 
+static VALUE exit_sidecar(VALUE data, VALUE m, int _argc, const VALUE *_argv, VALUE _) {
+  VALUE main_module = rb_const_get(rb_cObject, rb_intern("StackTrace"));
+  VALUE sidecar_class = rb_const_get(main_module, rb_intern("Sidecar"));
+
+  rb_funcall(sidecar_class, rb_intern("stop"), 0);
+
+  return Qtrue;
+}
+
 static VALUE rb_run(VALUE self) {
   if(running) return Qnil;
 
-  // I will need to register at_exit and kill this thread while closing the application
+  VALUE kernel_module = rb_const_get(rb_cObject, rb_intern("Kernel"));
+  rb_block_call(kernel_module, rb_intern("at_exit"), 0, NULL, &exit_sidecar, (VALUE)NULL);
+
   VALUE ractor_module = rb_const_get(rb_cObject, rb_intern("Ractor"));
   ractor = rb_block_call(ractor_module, rb_intern("new"), 0, NULL, &listen_events, (VALUE)NULL);
 
