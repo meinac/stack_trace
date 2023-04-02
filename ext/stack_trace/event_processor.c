@@ -1,5 +1,6 @@
 #include "event_processor.h"
+#include "debug.h"
 
 void event_processor(Event *event) {
-  printf("Event received...\n");
+  DEBUG("Event received...", event);
 }
