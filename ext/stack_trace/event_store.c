@@ -9,6 +9,7 @@
 #include <ruby/digest.h>
 
 #include "types/event.h"
+#include "debug.h"
 
 #define SIZE 1000
 
@@ -35,6 +36,8 @@ static void wait_free_space() {
 
 static void wait_event() {
   if(free_space == SIZE) {
+    DEBUG_TEXT("No event left, checking for interrupts.");
+
     rb_thread_check_ints(); // Otherwise the GC stucks!
 
     pthread_cond_wait(&has_event, &lock);
@@ -58,6 +61,8 @@ static Event *pull_event() {
 }
 
 static void event_produced() {
+  DEBUG_TEXT("Event produced. Free space: %d", free_space - 1);
+
   free_space--;
 
   pthread_cond_signal(&has_event);

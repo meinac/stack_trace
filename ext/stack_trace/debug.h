@@ -10,8 +10,6 @@
       default: serialize_unknown \
     )(s)
 
-  #define DEBUG_TEXT(msg) printf("%s", msg);
-
   #define DEBUG(msg, s)      \
     do {                     \
         printf("%s", msg);   \
@@ -19,6 +17,12 @@
         SERIALIZE_STRUCT(s); \
         printf("}\n");       \
     } while(0)
+
+    #define DEBUG_TEXT(msg, ...)    \
+      do {                          \
+        printf(msg, ##__VA_ARGS__); \
+        printf("\n");               \
+      } while(0)
 #else
   #define DEBUG(msg, ...)
   #define DEBUG_TEXT(msg)
