@@ -25,5 +25,5 @@
       } while(0)
 #else
   #define DEBUG(msg, ...)
-  #define DEBUG_TEXT(msg)
+  #define DEBUG_TEXT(msg, ...)
 #endif
