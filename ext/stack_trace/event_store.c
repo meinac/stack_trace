@@ -34,7 +34,11 @@ static void wait_free_space() {
 }
 
 static void wait_event() {
-  if(free_space == SIZE) pthread_cond_wait(&has_event, &lock);
+  if(free_space == SIZE) {
+    rb_thread_check_ints(); // Otherwise the GC stucks!
+
+    pthread_cond_wait(&has_event, &lock);
+  }
 }
 
 static Event *claim_event() {

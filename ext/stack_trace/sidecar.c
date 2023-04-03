@@ -36,6 +36,8 @@ static VALUE rb_run(VALUE self) {
   VALUE ractor_module = rb_const_get(rb_cObject, rb_intern("Ractor"));
   ractor = rb_block_call(ractor_module, rb_intern("new"), 0, NULL, &listen_events, (VALUE)NULL);
 
+  rb_gc_register_address(&ractor); // So the GC does not try to free this object.
+
   return Qtrue;
 }
 
