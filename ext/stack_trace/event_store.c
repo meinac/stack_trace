@@ -7,11 +7,13 @@
 #include <stdlib.h>
 #include <pthread.h>
 #include <ruby/digest.h>
+#include <time.h>
 
 #include "types/event.h"
 #include "debug.h"
 
 #define SIZE 1000
+#define TEN_MILLISECONDS 10000000
 
 pthread_cond_t has_space = PTHREAD_COND_INITIALIZER;
 pthread_cond_t has_event = PTHREAD_COND_INITIALIZER;
@@ -34,14 +36,20 @@ static void wait_free_space() {
   if(free_space == 0) pthread_cond_wait(&has_space, &lock);
 }
 
-static void wait_event() {
+static int wait_event() {
   if(free_space == SIZE) {
     DEBUG_TEXT("No event left, checking for interrupts.");
 
     rb_thread_check_ints(); // Otherwise the GC stucks!
 
-    pthread_cond_wait(&has_event, &lock);
+    struct timespec ts;
+    clock_gettime(CLOCK_REALTIME, &ts);
+    ts.tv_nsec += TEN_MILLISECONDS;
+
+    return pthread_cond_timedwait(&has_event, &lock, &ts); // returns 0 if the thread gets signal from another one
   }
+
+  return 0;
 }
 
 static Event *claim_event() {
@@ -55,7 +63,7 @@ static Event *claim_event() {
 static Event *pull_event() {
   consumer_cursor = consumer_cursor % SIZE;
 
-  wait_event();
+  if(wait_event() != 0) return NULL; // either timeout or an error
 
   return store[consumer_cursor++];
 }
@@ -93,9 +101,11 @@ void consume_event(void(*processor_func)(Event *event)) {
 
   Event *event = pull_event();
 
-  processor_func(event);
+  if(event != NULL) {
+    processor_func(event);
 
-  event_consumed();
+    event_consumed();
+  }
 
   pthread_mutex_unlock(&lock);
 }
