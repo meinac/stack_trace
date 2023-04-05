@@ -11,6 +11,7 @@ Span *create_span(Event *event) {
   span->klass = event->klass;
   span->self_klass = event->self_klass;
   span->method = event->method;
+  span->exception = Qundef;
   span->children_count = 0;
   span->singleton = event->for_singleton ? Qtrue : Qfalse;
 
@@ -75,7 +76,7 @@ VALUE span_to_ruby_hash(Span *span) {
   rb_hash_aset(hash, rb_str_new2("Duration"), INT2FIX(duration_of(span)));
   rb_hash_aset(hash, rb_str_new2("Spans"), to_ruby_array(span->children_count, span->children));
 
-  if(span->exception)
+  if(span->exception != Qundef)
     rb_hash_aset(hash, rb_str_new2("Exception"), span->exception);
 
   return hash;
