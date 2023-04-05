@@ -23,6 +23,7 @@
     VALUE receiver;
     VALUE method;
     VALUE raised_exception;
+    VALUE return_value;
     bool for_singleton;
     long int at;
   };

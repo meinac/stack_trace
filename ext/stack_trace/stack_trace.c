@@ -6,6 +6,7 @@
 #include "event_store.h"
 #include "current_trace.h"
 #include "trace.h"
+#include "configuration.h"
 
 static rb_event_flag_t traced_events() {
   VALUE main_module = rb_const_get(rb_cObject, rb_intern("StackTrace"));
@@ -38,11 +39,14 @@ void Init_stack_trace() {
   rb_ext_ractor_safe(true);
 
   VALUE main_module = rb_const_get(rb_cObject, rb_intern("StackTrace"));
+  VALUE configuration_class = rb_const_get(main_module, rb_intern("Configuration"));
 
   rb_define_singleton_method(main_module, "trace_point", rb_trace_point, 0);
   rb_define_singleton_method(main_module, "start_trace", rb_create_trace, 0);
   rb_define_singleton_method(main_module, "complete_trace", rb_send_eot, 0);
   rb_define_singleton_method(main_module, "current", rb_get_current_trace, 0);
+
+  rb_define_method(configuration_class, "inspect_return_values=", rb_set_inspect_return_values, 1);
 
   Init_event_store();
   Init_sidecar();

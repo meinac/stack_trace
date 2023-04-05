@@ -5,6 +5,7 @@
 #include "event_store.h"
 #include "current_trace.h"
 #include "utils.h"
+#include "configuration.h"
 
 void create_event(VALUE tp_val, void *_data) {
   Event event = {};
@@ -35,10 +36,15 @@ void create_event(VALUE tp_val, void *_data) {
   event.receiver = rb_funcall(self, rb_intern("st_name"), 0);
   event.method = method;
   event.for_singleton = for_singleton;
+  event.return_value = Qundef;
   event.at = get_monotonic_m_secs();
 
   if(event.event == RUBY_EVENT_RAISE)
     event.raised_exception = rb_tracearg_raised_exception(trace_arg);
+
+  if(RTEST(get_inspect_return_values()) &&
+     (event.event == RUBY_EVENT_RETURN || event.event == RUBY_EVENT_C_RETURN || event.event == RUBY_EVENT_B_RETURN))
+    event.return_value = rb_tracearg_return_value(trace_arg);
 
   produce_event(event);
 }

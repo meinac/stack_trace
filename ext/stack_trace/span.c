@@ -11,6 +11,7 @@ Span *create_span(Event *event) {
   span->klass = event->klass;
   span->self_klass = event->self_klass;
   span->method = event->method;
+  span->return_value = Qundef;
   span->exception = Qundef;
   span->children_count = 0;
   span->singleton = event->for_singleton ? Qtrue : Qfalse;
@@ -41,6 +42,7 @@ Span *add_child(Span *parent, Span *child) {
 
 Span *close_span(Span *span, Event *event) {
   span->finished_at = event->at;
+  span->return_value = event->return_value;
 
   return span->caller;
 }
@@ -78,6 +80,9 @@ VALUE span_to_ruby_hash(Span *span) {
 
   if(span->exception != Qundef)
     rb_hash_aset(hash, rb_str_new2("Exception"), span->exception);
+
+  if(span->return_value != Qundef)
+    rb_hash_aset(hash, rb_str_new2("Return Value"), rb_funcall(span->return_value, rb_intern("st_name"), 0));
 
   return hash;
 }

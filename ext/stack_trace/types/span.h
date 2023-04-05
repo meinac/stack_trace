@@ -13,6 +13,7 @@
     VALUE method;
     VALUE singleton;
     VALUE exception;
+    VALUE return_value;
     Span *caller;
     int children_count;
     Span **children;
