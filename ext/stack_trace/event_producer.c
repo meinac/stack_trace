@@ -7,6 +7,16 @@
 #include "utils.h"
 #include "configuration.h"
 
+VALUE extract_arguments(VALUE tp_val) {
+  VALUE main_module = rb_const_get(rb_cObject, rb_intern("StackTrace"));
+  VALUE extractor_class = rb_const_get(main_module, rb_intern("ArgumentExtractor"));
+
+  VALUE arguments = rb_funcall(extractor_class, rb_intern("extract"), 1, tp_val);
+  rb_gc_register_address(&arguments);
+
+  return arguments;
+}
+
 void create_event(VALUE tp_val, void *_data) {
   Event event = {};
   int for_singleton = false;
@@ -37,10 +47,15 @@ void create_event(VALUE tp_val, void *_data) {
   event.method = method;
   event.for_singleton = for_singleton;
   event.return_value = Qundef;
+  event.arguments = Qundef;
   event.at = get_monotonic_m_secs();
 
   if(event.event == RUBY_EVENT_RAISE)
     event.raised_exception = rb_tracearg_raised_exception(trace_arg);
+
+  if(RTEST(get_inspect_arguments()) &&
+     (event.event == RUBY_EVENT_CALL || event.event == RUBY_EVENT_C_CALL || event.event == RUBY_EVENT_B_CALL))
+    event.arguments = extract_arguments(tp_val);
 
   if(RTEST(get_inspect_return_values()) &&
      (event.event == RUBY_EVENT_RETURN || event.event == RUBY_EVENT_C_RETURN || event.event == RUBY_EVENT_B_RETURN))

@@ -2,6 +2,7 @@
 
 require_relative "stack_trace/version"
 require_relative "stack_trace/configuration"
+require_relative "stack_trace/argument_extractor"
 require_relative "stack_trace/patch/object"
 require_relative "stack_trace/patch/class"
 require_relative "stack_trace/patch/numeric"

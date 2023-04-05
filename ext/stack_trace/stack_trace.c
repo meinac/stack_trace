@@ -47,6 +47,7 @@ void Init_stack_trace() {
   rb_define_singleton_method(main_module, "current", rb_get_current_trace, 0);
 
   rb_define_method(configuration_class, "inspect_return_values=", rb_set_inspect_return_values, 1);
+  rb_define_method(configuration_class, "inspect_arguments=", rb_set_inspect_arguments, 1);
 
   Init_event_store();
   Init_sidecar();

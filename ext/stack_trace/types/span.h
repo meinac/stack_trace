@@ -14,6 +14,7 @@
     VALUE singleton;
     VALUE exception;
     VALUE return_value;
+    VALUE arguments;
     Span *caller;
     int children_count;
     Span **children;

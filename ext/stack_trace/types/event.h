@@ -24,6 +24,7 @@
     VALUE method;
     VALUE raised_exception;
     VALUE return_value;
+    VALUE arguments;
     bool for_singleton;
     long int at;
   };
