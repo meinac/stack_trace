@@ -12,6 +12,7 @@
     VALUE receiver;
     VALUE method;
     VALUE singleton;
+    VALUE exception;
     Span *caller;
     int children_count;
     Span **children;

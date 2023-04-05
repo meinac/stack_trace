@@ -43,6 +43,12 @@ void close_current_span(Event *event) {
   trace->current_span = close_span(trace->current_span, event);
 }
 
+void attach_exception(Event *event) {
+  Trace *trace = event->trace;
+
+  trace->current_span->exception = event->raised_exception;
+}
+
 void close_current_trace(Event *event) {
   pthread_mutex_lock(&trace_access_mutex);
   event->trace->finished = true;
@@ -58,12 +64,12 @@ void process_event(Event *event) {
     case RUBY_EVENT_C_CALL:
     case RUBY_EVENT_B_CALL:
       return create_new_span(event);
-      break;
     case RUBY_EVENT_RETURN:
     case RUBY_EVENT_C_RETURN:
     case RUBY_EVENT_B_RETURN:
       return close_current_span(event);
-      break;
+    case RUBY_EVENT_RAISE:
+      return attach_exception(event);
     case END_OF_TRACE:
       return close_current_trace(event);
     case END_OF_OBSOLOTE_TRACE_EVENT:

@@ -37,5 +37,8 @@ void create_event(VALUE tp_val, void *_data) {
   event.for_singleton = for_singleton;
   event.at = get_monotonic_m_secs();
 
+  if(event.event == RUBY_EVENT_RAISE)
+    event.raised_exception = rb_tracearg_raised_exception(trace_arg);
+
   produce_event(event);
 }

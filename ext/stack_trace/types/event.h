@@ -22,6 +22,7 @@
     VALUE self_klass;
     VALUE receiver;
     VALUE method;
+    VALUE raised_exception;
     bool for_singleton;
     long int at;
   };
