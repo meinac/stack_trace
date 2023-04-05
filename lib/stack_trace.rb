@@ -5,7 +5,11 @@ require_relative "stack_trace/configuration"
 require_relative "stack_trace/argument_extractor"
 require_relative "stack_trace/patch/object"
 require_relative "stack_trace/patch/class"
+require_relative "stack_trace/patch/nil_class"
 require_relative "stack_trace/patch/numeric"
+require_relative "stack_trace/patch/false_class"
+require_relative "stack_trace/patch/true_class"
+require_relative "stack_trace/patch/symbol"
 require_relative "stack_trace/ext/stack_trace"
 
 module StackTrace

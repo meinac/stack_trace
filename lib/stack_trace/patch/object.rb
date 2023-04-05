@@ -2,6 +2,6 @@
 
 class Object
   def st_name
-    "#{self.class.name}##{object_id}"
+    "#{self.class.name}:#{format('%#016x', (object_id << 1))}>"
   end
 end
