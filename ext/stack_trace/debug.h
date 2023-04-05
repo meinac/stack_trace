@@ -10,19 +10,23 @@
       default: serialize_unknown \
     )(s)
 
+  #define DEBUG_HEADER() printf("DEBUG: %s:%d:%s(): ", __FILE__, __LINE__, __func__)
+
   #define DEBUG(msg, s)      \
     do {                     \
+        DEBUG_HEADER();      \
         printf("%s", msg);   \
         printf("{");         \
         SERIALIZE_STRUCT(s); \
         printf("}\n");       \
     } while(0)
 
-    #define DEBUG_TEXT(msg, ...)    \
-      do {                          \
-        printf(msg, ##__VA_ARGS__); \
-        printf("\n");               \
-      } while(0)
+  #define DEBUG_TEXT(msg, ...)    \
+    do {                          \
+      DEBUG_HEADER();             \
+      printf(msg, ##__VA_ARGS__); \
+      printf("\n");               \
+    } while(0)
 #else
   #define DEBUG(msg, ...)
   #define DEBUG_TEXT(msg, ...)
