@@ -2,16 +2,16 @@
 
 #include "debug.h"
 
-void serialize_event(Event *event) {
+void serialize_event(char *buffer, Event *event) {
   switch(event->event) {
     case END_OF_TRACE:
-      printf("End of trace");
+      sprintf(buffer, "End of trace");
       return;
     case END_OF_OBSOLOTE_TRACE_EVENT:
-      printf("End of obsolote trace");
+      sprintf(buffer, "End of obsolote trace");
       return;
     case NOOP_EVENT:
-      printf("NO-OP event");
+      sprintf(buffer, "NO-OP event");
       return;
   }
 
@@ -23,7 +23,8 @@ void serialize_event(Event *event) {
   char *self_name_str = RSTRING_PTR(self_name);
   char *method_name_str = RSTRING_PTR(method_name);
 
-  printf(
+  sprintf(
+    buffer,
     "klass: %s, "
     "self: %s, "
     "method: %s, "
@@ -37,6 +38,6 @@ void serialize_event(Event *event) {
   );
 }
 
-void serialize_unknown(void *var) {
-  printf("Address: %p", var);
+void serialize_unknown(char *buffer, void *var) {
+  sprintf(buffer, "Address: %p", var);
 }

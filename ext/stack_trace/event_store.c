@@ -38,8 +38,6 @@ static void wait_free_space() {
 
 static int wait_event() {
   if(free_space == SIZE) {
-    DEBUG_TEXT("No event left, checking for interrupts.");
-
     rb_thread_check_ints(); // Otherwise the GC stucks!
 
     struct timespec ts;
