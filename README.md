@@ -28,7 +28,8 @@ StackTrace.current # => Returns a Hash that contains all the method calls and ex
 StackTrace.configure do |config|
   config.trace_ruby = true
   config.trace_c = true
-  config.inspect_return_values = true # Default `false`
+  config.inspect_return_values = true # Default `false` for performance reasons
+  config.inspect_arguments = true # Default `false` for performance reasons
 
   config.check_proc = -> (klass_name, method_name) do # If you want to limit the tracing for a set of classes
     klass_name == "Bar"
