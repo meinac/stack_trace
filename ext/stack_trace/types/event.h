@@ -19,7 +19,8 @@
     rb_event_flag_t event;
     rb_trace_arg_t *trace_arg;
     VALUE klass;
-    VALUE self;
+    VALUE self_klass;
+    VALUE receiver;
     VALUE method;
     bool for_singleton;
     long int at;

@@ -8,6 +8,8 @@
     long int finished_at;
 
     VALUE klass;
+    VALUE self_klass;
+    VALUE receiver;
     VALUE method;
     VALUE singleton;
     Span *caller;

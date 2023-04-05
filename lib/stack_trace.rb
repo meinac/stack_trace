@@ -2,6 +2,9 @@
 
 require_relative "stack_trace/version"
 require_relative "stack_trace/configuration"
+require_relative "stack_trace/patch/object"
+require_relative "stack_trace/patch/class"
+require_relative "stack_trace/patch/numeric"
 require_relative "stack_trace/ext/stack_trace"
 
 module StackTrace

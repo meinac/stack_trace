@@ -3,7 +3,7 @@
 #include <ruby/debug.h>
 
 #include "event_store.h"
-#include "event_processor.h"
+#include "trace.h"
 
 static bool running = false;
 static VALUE ractor;
@@ -12,7 +12,7 @@ static VALUE listen_events(VALUE data, VALUE m, int _argc, const VALUE *_argv, V
   running = true;
 
   while(running) {
-    consume_event(&event_processor);
+    consume_event(&process_event);
   }
 
   return Qtrue;

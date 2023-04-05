@@ -16,7 +16,7 @@ void serialize_event(char *buffer, Event *event) {
   }
 
   VALUE klass_name = rb_funcall(event->klass, rb_intern("name"), 0);
-  VALUE self_name = rb_funcall(event->self, rb_intern("name"), 0);
+  VALUE self_name = rb_funcall(event->self_klass, rb_intern("name"), 0);
   VALUE method_name = rb_funcall(event->method, rb_intern("name"), 0);
 
   char *klass_name_str = RSTRING_PTR(klass_name);
