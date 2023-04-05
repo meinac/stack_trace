@@ -33,6 +33,11 @@ static VALUE rb_run(VALUE self) {
   VALUE kernel_module = rb_const_get(rb_cObject, rb_intern("Kernel"));
   rb_block_call(kernel_module, rb_intern("at_exit"), 0, NULL, &exit_sidecar, (VALUE)NULL);
 
+  VALUE main_module = rb_const_get(rb_cObject, rb_intern("StackTrace"));
+  VALUE configuration = rb_funcall(main_module, rb_intern("configuration"), 0);
+  VALUE check_proc = rb_funcall(configuration, rb_intern("check_proc"), 0);
+  set_check_proc(check_proc);  // hack to share an object between main thread and ractor
+
   VALUE ractor_module = rb_const_get(rb_cObject, rb_intern("Ractor"));
   ractor = rb_block_call(ractor_module, rb_intern("new"), 0, NULL, &listen_events, (VALUE)NULL);
 

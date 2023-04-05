@@ -9,6 +9,8 @@
 #include "debug.h"
 #include "current_trace.h"
 
+static VALUE check_proc;
+
 pthread_cond_t trace_finished = PTHREAD_COND_INITIALIZER;
 pthread_mutex_t trace_access_mutex = PTHREAD_MUTEX_INITIALIZER;
 
@@ -21,8 +23,16 @@ void process_obsolote_event(Event *event) {
   // free_trace(event->trace);
 }
 
+void set_check_proc(VALUE proc) {
+  check_proc = proc;
+}
+
 bool is_tracked_event(Event *event) {
-  return true;
+  if(!RTEST(check_proc)) return true; // Check proc is not configured, all the events will be tracked.
+
+  VALUE result = rb_funcall(check_proc, rb_intern("call"), 2, event->self_klass, event->method);
+
+  return RTEST(result);
 }
 
 void create_new_span(Event *event) {
