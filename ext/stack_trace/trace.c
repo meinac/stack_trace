@@ -112,7 +112,7 @@ Trace *get_current_trace_without_gvl() {
 VALUE to_ruby_hash(Trace *trace) {
   VALUE hash = rb_hash_new();
 
-  rb_hash_aset(hash, rb_str_new2("Spans"), to_ruby_array(trace->top_span->children_count, trace->top_span->children));
+  rb_hash_aset(hash, rb_str_new2("spans"), to_ruby_array(trace->top_span->children_count, trace->top_span->children));
 
   return hash;
 }

@@ -71,24 +71,24 @@ int duration_of(Span *span) {
 VALUE span_to_ruby_hash(Span *span) {
   VALUE hash = rb_hash_new();
 
-  rb_hash_aset(hash, rb_str_new2("Receiver"), span->receiver);
-  rb_hash_aset(hash, rb_str_new2("Defined Class"), span->klass);
-  rb_hash_aset(hash, rb_str_new2("Self Class"), span->self_klass);
-  rb_hash_aset(hash, rb_str_new2("Method"), span->method);
-  rb_hash_aset(hash, rb_str_new2("Singleton"), span->singleton);
-  rb_hash_aset(hash, rb_str_new2("Duration"), INT2FIX(duration_of(span)));
-  rb_hash_aset(hash, rb_str_new2("Spans"), to_ruby_array(span->children_count, span->children));
+  rb_hash_aset(hash, rb_str_new2("receiver"), span->receiver);
+  rb_hash_aset(hash, rb_str_new2("defined_class"), span->klass);
+  rb_hash_aset(hash, rb_str_new2("self_class"), span->self_klass);
+  rb_hash_aset(hash, rb_str_new2("method_name"), span->method);
+  rb_hash_aset(hash, rb_str_new2("singleton"), span->singleton);
+  rb_hash_aset(hash, rb_str_new2("duration"), INT2FIX(duration_of(span)));
+  rb_hash_aset(hash, rb_str_new2("spans"), to_ruby_array(span->children_count, span->children));
 
   if(span->exception != Qundef)
-    rb_hash_aset(hash, rb_str_new2("Exception"), span->exception);
+    rb_hash_aset(hash, rb_str_new2("exception"), span->exception);
 
   if(span->return_value != Qundef)
-    rb_hash_aset(hash, rb_str_new2("Return Value"), rb_funcall(span->return_value, rb_intern("st_name"), 0));
+    rb_hash_aset(hash, rb_str_new2("return_value"), rb_funcall(span->return_value, rb_intern("st_name"), 0));
 
   if(span->arguments != Qundef) {
     rb_gc_unregister_address(&span->arguments);
 
-    rb_hash_aset(hash, rb_str_new2("Arguments"), span->arguments);
+    rb_hash_aset(hash, rb_str_new2("arguments"), span->arguments);
   }
 
   return hash;
