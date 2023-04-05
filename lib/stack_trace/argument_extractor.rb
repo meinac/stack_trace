@@ -15,7 +15,7 @@ module StackTrace
 
       def extract_argument(trace_point, parameter)
         trace_point.binding.eval(parameter.to_s).st_name
-      rescue SyntaxError # This can happen as we are calling `eval` here!
+      rescue Exception # SyntaxError can happen as we are calling `eval` here!
       end
     end
   end
