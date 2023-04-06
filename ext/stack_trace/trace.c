@@ -28,18 +28,17 @@ void set_check_proc(VALUE proc) {
   check_proc = proc;
 }
 
-static VALUE call_proc(VALUE arr) {
-  VALUE klass_name = rb_ary_entry(arr, 0);
-  VALUE method_name = rb_ary_entry(arr, 1);
+static VALUE call_proc(VALUE val) {
+  Event *event = (Event *)val;
 
-  return rb_funcall(check_proc, rb_intern("call"), 2, klass_name, method_name);
+  return rb_funcall(check_proc, rb_intern("call"), 2, event->self_klass, event->method);
 }
 
 bool is_tracked_event(Event *event) {
   if(!RTEST(check_proc)) return true; // Check proc is not configured, all the events will be tracked.
 
   int state;
-  VALUE result = rb_protect(call_proc, rb_ary_new3(2, event->self_klass, event->method), &state);
+  VALUE result = rb_protect(call_proc, (VALUE)event, &state); // I don't really like allocating a new array for each call so that's why I use this hack!
 
   if(state != 0) {
     DEBUG_TEXT("An error happened in `check_proc`");
