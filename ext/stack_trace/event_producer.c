@@ -31,7 +31,7 @@ void create_event(VALUE tp_val, void *_data) {
 
   VALUE klass = rb_tracearg_defined_class(trace_arg);
   VALUE self = rb_tracearg_self(trace_arg);
-  VALUE receiver = rb_funcall(self, rb_intern("st_name"), 0); // Maybe it's better if I just collect the string pointer.
+  VALUE receiver = rb_funcall(self, rb_intern("st_name"), 0);
   VALUE method = rb_tracearg_method_id(trace_arg);
   VALUE self_klass;
 
@@ -50,14 +50,13 @@ void create_event(VALUE tp_val, void *_data) {
   event.event = rb_tracearg_event_flag(trace_arg);
   event.klass = klass;
   event.self_klass = self_klass;
-  event.receiver = receiver;
   event.method = method;
   event.for_singleton = for_singleton;
   event.return_value = Qundef;
   event.arguments = Qundef;
   event.at = get_monotonic_m_secs();
 
-  rb_gc_register_address(&receiver);
+  copy_str(&event.receiver, receiver);
 
   if(event.event == RUBY_EVENT_RAISE) {
     VALUE exception = rb_tracearg_raised_exception(trace_arg);

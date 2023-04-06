@@ -7,9 +7,9 @@
     long int started_at;
     long int finished_at;
 
+    char *receiver;
     VALUE klass;
     VALUE self_klass;
-    VALUE receiver;
     VALUE method;
     VALUE singleton;
     VALUE return_value;
