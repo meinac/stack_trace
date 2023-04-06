@@ -2,6 +2,6 @@
 
 class TrueClass
   def st_name
-    self
+    inspect
   end
 end
