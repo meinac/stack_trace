@@ -92,18 +92,14 @@ int duration_of(Span *span) {
 }
 
 VALUE serialize_arguments(Argument *arguments, int count) {
-  VALUE array = rb_ary_new();
+  VALUE hash = rb_hash_new();
   int i;
 
   for(i = 0; i < count; i++) {
-    VALUE hash = rb_hash_new();
-
     rb_hash_aset(hash, arguments[i].key, rb_str_new_cstr(arguments[i].value));
-
-    rb_ary_push(array, hash);
   }
 
-  return array;
+  return hash;
 }
 
 VALUE span_to_ruby_hash(Span *span) {
