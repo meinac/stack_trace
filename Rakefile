@@ -6,7 +6,7 @@ require "rake/extensiontask"
 
 RSpec::Core::RakeTask.new(:spec)
 
-task default: :spec
+task default: [:compile, :spec]
 
 Rake::ExtensionTask.new "stack_trace" do |ext|
   ext.lib_dir = "lib/stack_trace/ext"
