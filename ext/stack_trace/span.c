@@ -71,13 +71,15 @@ int duration_of(Span *span) {
 VALUE span_to_ruby_hash(Span *span) {
   VALUE hash = rb_hash_new();
 
-  rb_hash_aset(hash, rb_str_new2("receiver"), span->receiver);
+  rb_hash_aset(hash, rb_str_new2("receiver"), rb_str_new_cstr(RSTRING_PTR(span->receiver)));
   rb_hash_aset(hash, rb_str_new2("defined_class"), span->klass);
   rb_hash_aset(hash, rb_str_new2("self_class"), span->self_klass);
   rb_hash_aset(hash, rb_str_new2("method_name"), span->method);
   rb_hash_aset(hash, rb_str_new2("singleton"), span->singleton);
   rb_hash_aset(hash, rb_str_new2("duration"), INT2FIX(duration_of(span)));
   rb_hash_aset(hash, rb_str_new2("spans"), to_ruby_array(span->children_count, span->children));
+
+  rb_gc_register_address(&span->receiver);
 
   if(span->exception != Qundef)
     rb_hash_aset(hash, rb_str_new2("exception"), span->exception);
