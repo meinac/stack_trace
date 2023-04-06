@@ -71,6 +71,19 @@ RSpec.describe StackTrace do
 
     it { is_expected.to match(expected_trace) }
 
+    describe 'calling the trace consecutively' do
+      it 'runs as expected' do
+        described_class.trace { TestClass.do_something }
+        described_class.trace { TestClass.do_something }
+      end
+    end
+
+    describe 'calling the current multiple times' do
+      it 'returns the same result' do
+        expect(described_class.current).to eq(described_class.current)
+      end
+    end
+
     describe 'nested trace calls' do
       it 'runs as expected' do
         described_class.trace do

@@ -20,7 +20,8 @@ void free_trace(Trace *trace) {
 }
 
 void process_obsolote_event(Event *event) {
-  // free_trace(event->trace);
+  // Free this trace as there is no reference to it anymore!
+  free_trace(event->trace);
 }
 
 void set_check_proc(VALUE proc) {
@@ -120,8 +121,6 @@ VALUE to_ruby_hash(Trace *trace) {
 VALUE rb_get_current_trace(VALUE _self) {
   Trace *trace = get_current_trace_without_gvl();
   VALUE ruby_hash = to_ruby_hash(trace);
-
-  free_trace(trace);
 
   return ruby_hash;
 }
