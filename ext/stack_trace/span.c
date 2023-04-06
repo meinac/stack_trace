@@ -61,6 +61,9 @@ void free_span(Span *span) {
     free(span->children);
   }
 
+  if(span->exception != NULL)
+    free(span->exception);
+
   free(span);
 }
 
