@@ -24,6 +24,8 @@ module StackTrace
     end
 
     def trace(&block)
+      return block.call if trace_point.enabled?
+
       start_trace # This creates the wrapper span
 
       trace_point.enable do

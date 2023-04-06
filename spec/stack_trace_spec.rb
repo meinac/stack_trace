@@ -70,5 +70,15 @@ RSpec.describe StackTrace do
     end
 
     it { is_expected.to match(expected_trace) }
+
+    describe 'nested trace calls' do
+      it 'runs as expected' do
+        described_class.trace do
+          described_class.trace do
+            TestClass.do_something
+          end
+        end
+      end
+    end
   end
 end
