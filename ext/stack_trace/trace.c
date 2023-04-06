@@ -119,6 +119,12 @@ VALUE to_ruby_hash(Trace *trace) {
 }
 
 VALUE rb_get_current_trace(VALUE _self) {
+  VALUE main_module = rb_const_get(rb_cObject, rb_intern("StackTrace"));
+  VALUE tracePoint = rb_iv_get(main_module, "@trace_point");
+  VALUE is_tracepoint_enabled = rb_funcall(tracePoint, rb_intern("enabled?"), 0);
+
+  if(RTEST(is_tracepoint_enabled)) rb_raise(rb_eRuntimeError, "Trace is active!");
+
   Trace *trace = get_current_trace_without_gvl();
   VALUE ruby_hash = to_ruby_hash(trace);
 

@@ -71,6 +71,12 @@ RSpec.describe StackTrace do
 
     it { is_expected.to match(expected_trace) }
 
+    describe 'calling the current within trace' do
+      it 'raises a runtime error' do
+        expect { described_class.trace { described_class.current } }.to raise_error(RuntimeError)
+      end
+    end
+
     describe 'calling the trace consecutively' do
       it 'runs as expected' do
         described_class.trace { TestClass.do_something }
