@@ -13,6 +13,7 @@ Span *create_span(Event *event) {
   span->method = event->method;
   span->return_value = NULL;
   span->arguments = event->arguments;
+  span->arguments_count = event->arguments_count;
   span->exception = NULL;
   span->children_count = 0;
   span->singleton = event->for_singleton ? Qtrue : Qfalse;
@@ -48,6 +49,16 @@ Span *close_span(Span *span, Event *event) {
   return span->caller;
 }
 
+static void free_arguments(Span *span) {
+  int i;
+
+  for(i = 0; i < span->arguments_count; i++) {
+    free(span->arguments[i].value);
+  }
+
+  free(span->arguments);
+}
+
 
 // Deallocate the memory occupied by span
 // and its children.
@@ -67,6 +78,9 @@ void free_span(Span *span) {
   if(span->return_value != NULL)
     free(span->return_value);
 
+  if(span->arguments != NULL)
+    free_arguments(span);
+
   if(span->exception != NULL)
     free(span->exception);
 
@@ -75,6 +89,21 @@ void free_span(Span *span) {
 
 int duration_of(Span *span) {
   return (int)(span->finished_at - span->started_at);
+}
+
+VALUE serialize_arguments(Argument *arguments, int count) {
+  VALUE array = rb_ary_new();
+  int i;
+
+  for(i = 0; i < count; i++) {
+    VALUE hash = rb_hash_new();
+
+    rb_hash_aset(hash, arguments[i].key, rb_str_new_cstr(arguments[i].value));
+
+    rb_ary_push(array, hash);
+  }
+
+  return array;
 }
 
 VALUE span_to_ruby_hash(Span *span) {
@@ -94,10 +123,8 @@ VALUE span_to_ruby_hash(Span *span) {
   if(span->return_value != NULL)
     rb_hash_aset(hash, rb_str_new2("return_value"), rb_str_new_cstr(span->return_value));
 
-  if(span->arguments != Qundef) {
-    rb_gc_unregister_address(&span->arguments);
-
-    rb_hash_aset(hash, rb_str_new2("arguments"), span->arguments);
+  if(span->arguments != NULL) {
+    rb_hash_aset(hash, rb_str_new2("arguments"), serialize_arguments(span->arguments, span->arguments_count));
   }
 
   return hash;

@@ -4,6 +4,8 @@
 #include <stdbool.h>
 #include <sys/time.h>
 
+#include "types/argument.h"
+
 #ifndef EVENT_H
   #define EVENT_H
 
@@ -23,7 +25,8 @@
     VALUE self_klass;
     VALUE method;
     char *return_value;
-    VALUE arguments;
+    Argument *arguments;
+    int arguments_count;
     char *raised_exception;
     bool for_singleton;
     long int at;

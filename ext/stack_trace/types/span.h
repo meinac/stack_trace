@@ -1,3 +1,5 @@
+#include "types/argument.h"
+
 #ifndef SPAN_H
   #define SPAN_H
 
@@ -13,7 +15,8 @@
     VALUE method;
     VALUE singleton;
     char *return_value;
-    VALUE arguments;
+    Argument *arguments;
+    int arguments_count;
     char *exception;
     Span *caller;
     int children_count;

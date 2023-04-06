@@ -7,20 +7,45 @@
 #include "utils.h"
 #include "configuration.h"
 
-VALUE extract_arguments(VALUE tp_val) {
-  VALUE main_module = rb_const_get(rb_cObject, rb_intern("StackTrace"));
-  VALUE extractor_class = rb_const_get(main_module, rb_intern("ArgumentExtractor"));
+struct MemoS {
+  int i;
+  Argument *arguments;
+};
 
-  VALUE arguments = rb_funcall(extractor_class, rb_intern("extract"), 1, tp_val);
-  rb_gc_register_address(&arguments);
-
-  return arguments;
-}
-
-void copy_str(char **target, VALUE string) {
+static void copy_str(char **target, VALUE string) {
   *target = malloc(sizeof(char) * RSTRING_LEN(string) + 1);
 
   memcpy(*target, RSTRING_PTR(string), RSTRING_LEN(string));
+}
+
+static int extract_kv(VALUE key, VALUE value, VALUE data) {
+  struct MemoS *memo = (struct MemoS *)data;
+
+  memo->arguments[memo->i].key = key;
+  copy_str(&memo->arguments[memo->i].value, value);
+
+  memo->i++;
+
+  return ST_CONTINUE;
+}
+
+static void extract_arguments(Event *event, VALUE tp_val) {
+  VALUE main_module = rb_const_get(rb_cObject, rb_intern("StackTrace"));
+  VALUE extractor_class = rb_const_get(main_module, rb_intern("ArgumentExtractor"));
+
+  VALUE arguments_hash = rb_funcall(extractor_class, rb_intern("extract"), 1, tp_val);
+  VALUE hash_size = rb_funcall(arguments_hash, rb_intern("size"), 0);
+
+  int arguments_count = FIX2INT(hash_size);
+
+  if(arguments_count == 0) return;
+
+  event->arguments_count = arguments_count;
+  event->arguments = malloc(sizeof(Argument) * arguments_count);
+
+  struct MemoS memo = { 0, event->arguments };
+
+  rb_hash_foreach(arguments_hash, extract_kv, (VALUE)&memo);
 }
 
 void create_event(VALUE tp_val, void *_data) {
@@ -53,7 +78,7 @@ void create_event(VALUE tp_val, void *_data) {
   event.method = method;
   event.for_singleton = for_singleton;
   event.return_value = NULL;
-  event.arguments = Qundef;
+  event.arguments = NULL;
   event.at = get_monotonic_m_secs();
 
   copy_str(&event.receiver, receiver);
@@ -67,7 +92,7 @@ void create_event(VALUE tp_val, void *_data) {
 
   if(RTEST(get_inspect_arguments()) &&
      (event.event == RUBY_EVENT_CALL || event.event == RUBY_EVENT_C_CALL || event.event == RUBY_EVENT_B_CALL))
-    event.arguments = extract_arguments(tp_val);
+    extract_arguments(&event, tp_val);
 
   if(RTEST(get_inspect_return_values()) &&
      (event.event == RUBY_EVENT_RETURN || event.event == RUBY_EVENT_C_RETURN || event.event == RUBY_EVENT_B_RETURN)) {
