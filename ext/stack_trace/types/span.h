@@ -12,7 +12,7 @@
     VALUE self_klass;
     VALUE method;
     VALUE singleton;
-    VALUE return_value;
+    char *return_value;
     VALUE arguments;
     char *exception;
     Span *caller;

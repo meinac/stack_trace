@@ -11,7 +11,7 @@ Span *create_span(Event *event) {
   span->klass = event->klass;
   span->self_klass = event->self_klass;
   span->method = event->method;
-  span->return_value = Qundef;
+  span->return_value = NULL;
   span->arguments = event->arguments;
   span->exception = NULL;
   span->children_count = 0;
@@ -64,6 +64,9 @@ void free_span(Span *span) {
   if(span->receiver != NULL)
     free(span->receiver);
 
+  if(span->return_value != NULL)
+    free(span->return_value);
+
   if(span->exception != NULL)
     free(span->exception);
 
@@ -88,8 +91,8 @@ VALUE span_to_ruby_hash(Span *span) {
   if(span->exception != NULL)
     rb_hash_aset(hash, rb_str_new2("exception"), rb_str_new_cstr(span->exception));
 
-  if(span->return_value != Qundef)
-    rb_hash_aset(hash, rb_str_new2("return_value"), rb_funcall(span->return_value, rb_intern("st_name"), 0));
+  if(span->return_value != NULL)
+    rb_hash_aset(hash, rb_str_new2("return_value"), rb_str_new_cstr(span->return_value));
 
   if(span->arguments != Qundef) {
     rb_gc_unregister_address(&span->arguments);

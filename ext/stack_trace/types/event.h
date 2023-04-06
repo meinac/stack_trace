@@ -22,7 +22,7 @@
     VALUE klass;
     VALUE self_klass;
     VALUE method;
-    VALUE return_value;
+    char *return_value;
     VALUE arguments;
     char *raised_exception;
     bool for_singleton;
