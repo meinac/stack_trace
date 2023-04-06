@@ -28,10 +28,24 @@ void set_check_proc(VALUE proc) {
   check_proc = proc;
 }
 
+static VALUE call_proc(VALUE arr) {
+  VALUE klass_name = rb_ary_entry(arr, 0);
+  VALUE method_name = rb_ary_entry(arr, 1);
+
+  return rb_funcall(check_proc, rb_intern("call"), 2, klass_name, method_name);
+}
+
 bool is_tracked_event(Event *event) {
   if(!RTEST(check_proc)) return true; // Check proc is not configured, all the events will be tracked.
 
-  VALUE result = rb_funcall(check_proc, rb_intern("call"), 2, event->self_klass, event->method);
+  int state;
+  VALUE result = rb_protect(call_proc, rb_ary_new3(2, event->self_klass, event->method), &state);
+
+  if(state != 0) {
+    DEBUG_TEXT("An error happened in `check_proc`");
+
+    rb_set_errinfo(Qnil);
+  }
 
   return RTEST(result);
 }
