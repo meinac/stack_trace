@@ -22,9 +22,9 @@
     VALUE self_klass;
     VALUE receiver;
     VALUE method;
-    VALUE raised_exception;
     VALUE return_value;
     VALUE arguments;
+    char *raised_exception;
     bool for_singleton;
     long int at;
   };

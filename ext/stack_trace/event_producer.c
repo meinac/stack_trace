@@ -17,6 +17,12 @@ VALUE extract_arguments(VALUE tp_val) {
   return arguments;
 }
 
+void copy_str(char **target, VALUE string) {
+  *target = malloc(sizeof(char) * RSTRING_LEN(string) + 1);
+
+  memcpy(*target, RSTRING_PTR(string), RSTRING_LEN(string));
+}
+
 void create_event(VALUE tp_val, void *_data) {
   Event event = {};
   int for_singleton = false;
@@ -53,8 +59,12 @@ void create_event(VALUE tp_val, void *_data) {
 
   rb_gc_register_address(&receiver);
 
-  if(event.event == RUBY_EVENT_RAISE)
-    event.raised_exception = rb_tracearg_raised_exception(trace_arg);
+  if(event.event == RUBY_EVENT_RAISE) {
+    VALUE exception = rb_tracearg_raised_exception(trace_arg);
+    VALUE exception_to_s = rb_funcall(exception, rb_intern("to_s"), 0);
+
+    copy_str(&event.raised_exception, exception_to_s);
+  }
 
   if(RTEST(get_inspect_arguments()) &&
      (event.event == RUBY_EVENT_CALL || event.event == RUBY_EVENT_C_CALL || event.event == RUBY_EVENT_B_CALL))

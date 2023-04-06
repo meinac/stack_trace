@@ -13,7 +13,7 @@ Span *create_span(Event *event) {
   span->method = event->method;
   span->return_value = Qundef;
   span->arguments = event->arguments;
-  span->exception = Qundef;
+  span->exception = NULL;
   span->children_count = 0;
   span->singleton = event->for_singleton ? Qtrue : Qfalse;
 
@@ -81,8 +81,8 @@ VALUE span_to_ruby_hash(Span *span) {
 
   rb_gc_register_address(&span->receiver);
 
-  if(span->exception != Qundef)
-    rb_hash_aset(hash, rb_str_new2("exception"), span->exception);
+  if(span->exception != NULL)
+    rb_hash_aset(hash, rb_str_new2("exception"), rb_str_new_cstr(span->exception));
 
   if(span->return_value != Qundef)
     rb_hash_aset(hash, rb_str_new2("return_value"), rb_funcall(span->return_value, rb_intern("st_name"), 0));

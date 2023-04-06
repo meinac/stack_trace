@@ -12,9 +12,9 @@
     VALUE receiver;
     VALUE method;
     VALUE singleton;
-    VALUE exception;
     VALUE return_value;
     VALUE arguments;
+    char *exception;
     Span *caller;
     int children_count;
     Span **children;
