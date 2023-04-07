@@ -61,12 +61,11 @@ void create_event(VALUE tp_val, void *_data) {
   VALUE self_klass;
 
   if(FL_TEST(klass, FL_SINGLETON)) {
-    klass = rb_ivar_get(klass, rb_intern("__attached__"));
     for_singleton = true;
-    self_klass = rb_funcall(self, rb_intern("name"), 0);
+    klass = rb_ivar_get(klass, rb_intern("__attached__"));
+    self_klass = self;
   } else {
-    VALUE class = rb_funcall(self, rb_intern("class"), 0);
-    self_klass = rb_funcall(class, rb_intern("name"), 0);
+    self_klass = CLASS_OF(self);
   }
 
   event.trace = get_current_trace();

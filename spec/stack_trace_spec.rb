@@ -23,7 +23,7 @@ RSpec.describe StackTrace do
             "method_name" => :do_something,
             "receiver" => "TestClass",
             "return_value" => "2.0",
-            "self_class" => "TestClass",
+            "self_class" => TestClass,
             "singleton" => true,
             "spans" => [
               {
@@ -33,7 +33,7 @@ RSpec.describe StackTrace do
                 "method_name" => :abstract_method,
                 "receiver" => "TestClass",
                 "return_value" => "2.0",
-                "self_class" => "TestClass",
+                "self_class" => TestClass,
                 "singleton" => true,
                 "spans" => [
                   {
@@ -43,7 +43,7 @@ RSpec.describe StackTrace do
                     "method_name" => :sqrt,
                     "receiver" => an_instance_of(String),
                     "return_value" => "2.0",
-                    "self_class" => "Math",
+                    "self_class" => Math,
                     "singleton" => true,
                     "spans" => []
                   }
