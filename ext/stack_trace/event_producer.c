@@ -56,7 +56,6 @@ void create_event(VALUE tp_val, void *_data) {
 
   VALUE klass = rb_tracearg_defined_class(trace_arg);
   VALUE self = rb_tracearg_self(trace_arg);
-  VALUE receiver = rb_funcall(self, rb_intern("st_name"), 0);
   VALUE method = rb_tracearg_method_id(trace_arg);
   VALUE self_klass;
 
@@ -67,6 +66,20 @@ void create_event(VALUE tp_val, void *_data) {
   } else {
     self_klass = CLASS_OF(self);
   }
+
+  VALUE cname;
+
+  if(rb_obj_is_kind_of(klass, rb_cClass)) {
+    cname = rb_class_name(klass);
+  } else if(rb_obj_is_kind_of(klass, rb_cModule)) {
+    cname = rb_mod_name(klass);
+  } else {
+    return;
+  }
+
+  VALUE receiver = rb_sprintf("#<%"PRIsVALUE":%p>", cname, (void*)self);
+
+  copy_str(&event.receiver, receiver);
 
   event.trace = get_current_trace();
   event.tp_val = tp_val;
@@ -79,8 +92,6 @@ void create_event(VALUE tp_val, void *_data) {
   event.return_value = NULL;
   event.arguments = NULL;
   event.at = get_monotonic_m_secs();
-
-  copy_str(&event.receiver, receiver);
 
   if(event.event == RUBY_EVENT_RAISE) {
     VALUE exception = rb_tracearg_raised_exception(trace_arg);
