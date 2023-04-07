@@ -18,32 +18,31 @@ RSpec.describe StackTrace do
       {
         "spans" => [
           {
-            "arguments" => {},
             "defined_class" => TestClass,
             "duration" => an_instance_of(Integer),
             "method_name" => :do_something,
             "receiver" => "TestClass",
-            "return_value" => 2.0,
+            "return_value" => "2.0",
             "self_class" => "TestClass",
             "singleton" => true,
             "spans" => [
               {
-                "arguments" => { :num => 4 },
+                "arguments" => { :num => "4" },
                 "defined_class" => AbstractClass,
                 "duration" => an_instance_of(Integer),
                 "method_name" => :abstract_method,
                 "receiver" => "TestClass",
-                "return_value" => 2.0,
+                "return_value" => "2.0",
                 "self_class" => "TestClass",
                 "singleton" => true,
                 "spans" => [
                   {
-                    "arguments" => { :req => nil },
+                    "arguments" => { :req => "nil" },
                     "defined_class" => Math,
                     "duration" => an_instance_of(Integer),
                     "method_name" => :sqrt,
                     "receiver" => an_instance_of(String),
-                    "return_value" => 2.0,
+                    "return_value" => "2.0",
                     "self_class" => "Math",
                     "singleton" => true,
                     "spans" => []
