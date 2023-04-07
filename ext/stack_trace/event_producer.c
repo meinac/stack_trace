@@ -48,6 +48,34 @@ static void extract_arguments(Event *event, VALUE tp_val) {
   rb_hash_foreach(arguments_hash, extract_kv, (VALUE)&memo);
 }
 
+static VALUE object_name_for_cBasicObject(VALUE object, VALUE klass) {
+  VALUE cname;
+
+  if(rb_obj_is_kind_of(klass, rb_cClass)) {
+    cname = rb_class_name(klass);
+  } else if(rb_obj_is_kind_of(klass, rb_cModule)) {
+    cname = rb_mod_name(klass);
+  } else {
+    return Qundef; // This is still possible!
+  }
+
+  return rb_sprintf("#<%"PRIsVALUE":%p>", cname, (void*)object);
+}
+
+static VALUE object_name_for_cObject(VALUE object) {
+  return rb_funcall(object, rb_intern("st_name"), 0);
+}
+
+static VALUE get_object_name(VALUE object, VALUE klass) {
+  if(rb_obj_is_kind_of(object, rb_cObject)) {
+    return object_name_for_cObject(object);
+  } else if(rb_obj_is_kind_of(object, rb_cBasicObject)) {
+    return object_name_for_cBasicObject(object, klass);
+  } else {
+    return Qundef;
+  }
+}
+
 void create_event(VALUE tp_val, void *_data) {
   Event event = {};
   int for_singleton = false;
@@ -67,25 +95,9 @@ void create_event(VALUE tp_val, void *_data) {
     self_klass = CLASS_OF(self);
   }
 
-  VALUE cname;
+  VALUE receiver = get_object_name(self, klass);
 
-  if(rb_obj_is_kind_of(klass, rb_cClass)) {
-    cname = rb_class_name(klass);
-  } else if(rb_obj_is_kind_of(klass, rb_cModule)) {
-    cname = rb_mod_name(klass);
-  } else {
-    return; // This is still possible!
-  }
-
-  VALUE receiver;
-
-  if(rb_obj_is_kind_of(self, rb_cObject)) {
-    receiver = rb_funcall(self, rb_intern("st_name"), 0);
-  } else if(rb_obj_is_kind_of(self, rb_cBasicObject)) {
-    receiver = rb_sprintf("#<%"PRIsVALUE":%p>", cname, (void*)self);
-  } else {
-    return;
-  }
+  if(receiver == Qundef) return;
 
   copy_str(&event.receiver, receiver);
 
