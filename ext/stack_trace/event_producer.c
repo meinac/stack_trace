@@ -74,10 +74,18 @@ void create_event(VALUE tp_val, void *_data) {
   } else if(rb_obj_is_kind_of(klass, rb_cModule)) {
     cname = rb_mod_name(klass);
   } else {
-    return;
+    return; // This is still possible!
   }
 
-  VALUE receiver = rb_sprintf("#<%"PRIsVALUE":%p>", cname, (void*)self);
+  VALUE receiver;
+
+  if(rb_obj_is_kind_of(self, rb_cObject)) {
+    receiver = rb_funcall(self, rb_intern("st_name"), 0);
+  } else if(rb_obj_is_kind_of(self, rb_cBasicObject)) {
+    receiver = rb_sprintf("#<%"PRIsVALUE":%p>", cname, (void*)self);
+  } else {
+    return;
+  }
 
   copy_str(&event.receiver, receiver);
 
