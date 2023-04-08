@@ -4,16 +4,20 @@ static VALUE extract_st_name(VALUE object) {
   return rb_funcall(object, rb_intern("st_name"), 0);
 }
 
-static VALUE object_name_for_cBasicObject(VALUE object, VALUE klass) {
-  VALUE cname;
-
-  if(rb_obj_is_kind_of(klass, rb_cClass)) {
-    cname = rb_class_name(klass);
-  } else if(rb_obj_is_kind_of(klass, rb_cModule)) {
-    cname = rb_mod_name(klass);
+static VALUE get_cname(VALUE constant) {
+  if(rb_obj_is_kind_of(constant, rb_cClass)) {
+    return rb_class_name(constant);
+  } else if(rb_obj_is_kind_of(constant, rb_cModule)) {
+    return rb_mod_name(constant);
   } else {
     return Qundef; // This is still possible!
   }
+}
+
+static VALUE object_name_for_cBasicObject(VALUE object, VALUE klass) {
+  VALUE cname = get_cname(klass);
+
+  if(cname == Qundef) return Qundef;
 
   return rb_sprintf("#<%"PRIsVALUE":%p>", cname, (void*)object);
 }
