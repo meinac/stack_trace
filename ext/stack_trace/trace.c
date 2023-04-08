@@ -41,7 +41,7 @@ bool is_tracked_event(Event *event) {
   VALUE result = rb_protect(call_proc, (VALUE)event, &state); // I don't really like allocating a new array for each call so that's why I use this hack!
 
   if(state != 0) {
-    DEBUG_TEXT("An error happened in `check_proc`");
+    rb_p(rb_errinfo());
 
     rb_set_errinfo(Qnil);
   }
