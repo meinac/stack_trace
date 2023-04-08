@@ -50,6 +50,12 @@ static void extract_arguments(Event *event, VALUE tp_val) {
 }
 
 void create_event(VALUE tp_val, void *_data) {
+  Trace *current_trace = get_current_trace();
+
+  // This can happen if a new thread spawns in trace scope.
+  // TODO: Save them with their thread identifier.
+  if(current_trace == NULL) return;
+
   Event event = {};
   int for_singleton = false;
 
@@ -74,7 +80,7 @@ void create_event(VALUE tp_val, void *_data) {
 
   copy_str(&event.receiver, receiver);
 
-  event.trace = get_current_trace();
+  event.trace = current_trace;
   event.event = rb_tracearg_event_flag(trace_arg);
   event.klass = klass;
   event.self_klass = self_klass;
