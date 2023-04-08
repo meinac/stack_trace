@@ -44,6 +44,8 @@ bool is_tracked_event(Event *event) {
     rb_p(rb_errinfo());
 
     rb_set_errinfo(Qnil);
+
+    return false;
   }
 
   return RTEST(result);
