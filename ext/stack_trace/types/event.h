@@ -17,9 +17,7 @@
 
   struct EventS {
     Trace *trace;
-    VALUE tp_val;
     rb_event_flag_t event;
-    rb_trace_arg_t *trace_arg;
     char *receiver;
     VALUE klass;
     VALUE self_klass;

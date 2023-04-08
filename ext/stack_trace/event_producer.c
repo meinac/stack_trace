@@ -102,8 +102,6 @@ void create_event(VALUE tp_val, void *_data) {
   copy_str(&event.receiver, receiver);
 
   event.trace = get_current_trace();
-  event.tp_val = tp_val;
-  event.trace_arg = trace_arg;
   event.event = rb_tracearg_event_flag(trace_arg);
   event.klass = klass;
   event.self_klass = self_klass;
