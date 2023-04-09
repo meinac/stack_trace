@@ -22,6 +22,14 @@ VALUE rb_create_trace(VALUE _self) {
   Span *span = malloc(sizeof(Span));
   span->children_count = 0;
   span->caller = NULL;
+  span->receiver = NULL;
+  span->klass = NULL;
+  span->self_klass = NULL;
+  span->return_value = NULL;
+  span->arguments = NULL;
+  span->arguments_count = 0;
+  span->exception = NULL;
+  span->children_count = 0;
 
   current_trace = malloc(sizeof(Trace));
   current_trace->finished = false;
