@@ -7,7 +7,7 @@ module StackTrace
         trace_point.parameters
                   .map(&:last)
                   .each_with_object({}) do |parameter, memo|
-                    memo[parameter] = extract_argument(trace_point, parameter).st_name
+                    memo[parameter] = extract_argument(trace_point, parameter)
                   end
       end
 

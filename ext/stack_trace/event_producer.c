@@ -23,7 +23,11 @@ static int extract_kv(VALUE key, VALUE value, VALUE data) {
   struct MemoS *memo = (struct MemoS *)data;
 
   memo->arguments[memo->i].key = key;
-  copy_str(&memo->arguments[memo->i].value, value);
+
+  VALUE value_klass = rb_obj_class(value);
+  VALUE value_st_name = st_name(value, value_klass);
+
+  if(value_st_name != Qundef) copy_str(&memo->arguments[memo->i].value, value_st_name);
 
   memo->i++;
 

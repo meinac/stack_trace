@@ -92,7 +92,8 @@ VALUE serialize_arguments(Argument *arguments, int count) {
   int i;
 
   for(i = 0; i < count; i++) {
-    rb_hash_aset(hash, arguments[i].key, rb_str_new_cstr(arguments[i].value));
+    if(arguments[i].value != NULL)
+      rb_hash_aset(hash, arguments[i].key, rb_str_new_cstr(arguments[i].value));
   }
 
   return hash;
