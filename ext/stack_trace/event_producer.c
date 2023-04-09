@@ -79,6 +79,7 @@ void create_event(VALUE tp_val, void *_data) {
   VALUE self_klass_name = get_cname(self_klass);
 
   if(receiver == Qundef || klass_name == Qundef || self_klass_name == Qundef) return;
+  if(!rb_obj_is_kind_of(klass_name, rb_cString) || !rb_obj_is_kind_of(self_klass_name, rb_cString)) return; // These values can be Qnil
 
   copy_str(&event.receiver, receiver);
   copy_str(&event.klass, klass_name);
