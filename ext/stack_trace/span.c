@@ -1,5 +1,6 @@
 #include "span.h"
 #include "utils.h"
+#include "argument.h"
 
 #define CHILDREN_BUF_INC_SIZE 10
 
@@ -49,17 +50,6 @@ Span *close_span(Span *span, Event *event) {
   return span->caller;
 }
 
-static void free_arguments(Span *span) {
-  int i;
-
-  for(i = 0; i < span->arguments_count; i++) {
-    free(span->arguments[i].value);
-  }
-
-  free(span->arguments);
-}
-
-
 // Deallocate the memory occupied by span
 // and its children.
 void free_span(Span *span) {
@@ -85,7 +75,7 @@ void free_span(Span *span) {
     free(span->return_value);
 
   if(span->arguments != NULL)
-    free_arguments(span);
+    free_arguments(span->arguments, span->arguments_count);
 
   if(span->exception != NULL)
     free(span->exception);

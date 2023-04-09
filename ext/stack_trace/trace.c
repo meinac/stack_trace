@@ -8,6 +8,7 @@
 #include "span.h"
 #include "debug.h"
 #include "current_trace.h"
+#include "argument.h"
 
 static VALUE check_proc;
 
@@ -34,7 +35,7 @@ static VALUE call_proc(VALUE val) {
   return rb_funcall(check_proc, rb_intern("call"), 2, rb_str_new_cstr(event->self_klass), event->method);
 }
 
-bool is_tracked_event(Event *event) {
+static bool is_tracked_event(Event *event) {
   if(!RTEST(check_proc)) return true; // Check proc is not configured, all the events will be tracked.
 
   int state;
@@ -51,8 +52,28 @@ bool is_tracked_event(Event *event) {
   return RTEST(result);
 }
 
+static void free_event_members(Event *event) {
+  if(event->receiver != NULL)
+    free(event->receiver);
+
+  if(event->klass != NULL)
+    free(event->klass);
+
+  if(event->self_klass != NULL)
+    free(event->self_klass);
+
+  if(event->return_value != NULL)
+    free(event->return_value);
+
+  if(event->raised_exception != NULL)
+    free(event->raised_exception);
+
+  if(event->arguments != NULL)
+    free_arguments(event->arguments, event->arguments_count);
+}
+
 void create_new_span(Event *event) {
-  if(!is_tracked_event(event)) return;
+  if(!is_tracked_event(event)) return free_event_members(event);
 
   Span *new_span = create_span(event);
 
@@ -62,7 +83,7 @@ void create_new_span(Event *event) {
 }
 
 void close_current_span(Event *event) {
-  if(!is_tracked_event(event)) return;
+  if(!is_tracked_event(event)) return free_event_members(event);
 
   Trace *trace = event->trace;
 
