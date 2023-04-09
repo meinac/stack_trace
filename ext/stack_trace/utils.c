@@ -1,4 +1,7 @@
+#define _POSIX_C_SOURCE 199309L
+
 #include <sys/time.h>
+#include <time.h>
 
 long int get_monotonic_m_secs() {
   struct timespec at;
