@@ -19,9 +19,9 @@
     Trace *trace;
     rb_event_flag_t event;
     char *receiver;
-    VALUE klass;
-    VALUE self_klass;
-    VALUE method;
+    char *klass;
+    char *self_klass;
+    VALUE method; // This is a symbol anyway
     char *return_value;
     Argument *arguments;
     int arguments_count;

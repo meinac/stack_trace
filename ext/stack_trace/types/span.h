@@ -10,8 +10,8 @@
     long int finished_at;
 
     char *receiver;
-    VALUE klass;
-    VALUE self_klass;
+    char *klass;
+    char *self_klass;
     VALUE method;
     VALUE singleton;
     char *return_value;

@@ -4,7 +4,7 @@ static VALUE extract_st_name(VALUE object) {
   return rb_funcall(object, rb_intern("st_name"), 0);
 }
 
-static VALUE get_cname(VALUE constant) {
+VALUE get_cname(VALUE constant) {
   if(rb_obj_is_kind_of(constant, rb_cClass)) {
     return rb_class_name(constant);
   } else if(rb_obj_is_kind_of(constant, rb_cModule)) {

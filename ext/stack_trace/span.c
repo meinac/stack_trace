@@ -75,6 +75,12 @@ void free_span(Span *span) {
   if(span->receiver != NULL)
     free(span->receiver);
 
+  if(span->klass != NULL)
+    free(span->klass);
+
+  if(span->self_klass != NULL)
+    free(span->self_klass);
+
   if(span->return_value != NULL)
     free(span->return_value);
 
@@ -106,8 +112,8 @@ VALUE span_to_ruby_hash(Span *span) {
   VALUE hash = rb_hash_new();
 
   rb_hash_aset(hash, rb_str_new2("receiver"), rb_str_new_cstr(span->receiver));
-  rb_hash_aset(hash, rb_str_new2("defined_class"), span->klass);
-  rb_hash_aset(hash, rb_str_new2("self_class"), span->self_klass);
+  rb_hash_aset(hash, rb_str_new2("defined_class"), rb_str_new_cstr(span->klass));
+  rb_hash_aset(hash, rb_str_new2("self_class"), rb_str_new_cstr(span->self_klass));
   rb_hash_aset(hash, rb_str_new2("method_name"), span->method);
   rb_hash_aset(hash, rb_str_new2("singleton"), span->singleton);
   rb_hash_aset(hash, rb_str_new2("duration"), INT2FIX(duration_of(span)));

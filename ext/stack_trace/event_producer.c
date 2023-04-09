@@ -75,15 +75,17 @@ void create_event(VALUE tp_val, void *_data) {
   }
 
   VALUE receiver = st_name(self, klass);
+  VALUE klass_name = get_cname(klass);
+  VALUE self_klass_name = get_cname(self_klass);
 
-  if(receiver == Qundef) return;
+  if(receiver == Qundef || klass_name == Qundef || self_klass_name == Qundef) return;
 
   copy_str(&event.receiver, receiver);
+  copy_str(&event.klass, klass_name);
+  copy_str(&event.self_klass, self_klass_name);
 
   event.trace = current_trace;
   event.event = rb_tracearg_event_flag(trace_arg);
-  event.klass = klass;
-  event.self_klass = self_klass;
   event.method = method;
   event.for_singleton = for_singleton;
   event.return_value = NULL;
