@@ -10,5 +10,6 @@
 # rspec failure tracking
 .rspec_status
 *.bundle
+*.so
 *.log
 spec/stack_trace/*
