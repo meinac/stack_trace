@@ -107,9 +107,10 @@ void create_event(VALUE tp_val, void *_data) {
   if(RTEST(get_inspect_return_values()) &&
      (event.event == RUBY_EVENT_RETURN || event.event == RUBY_EVENT_C_RETURN || event.event == RUBY_EVENT_B_RETURN)) {
     VALUE return_value = rb_tracearg_return_value(trace_arg);
-    VALUE return_value_st_name = rb_funcall(return_value, rb_intern("st_name"), 0);
+    VALUE return_value_class = rb_obj_class(return_value);
+    VALUE return_value_st_name = st_name(return_value, return_value_class);
 
-    copy_str(&event.return_value, return_value_st_name);
+    if(return_value_st_name != Qundef) copy_str(&event.return_value, return_value_st_name);
   }
 
   produce_event(event);
