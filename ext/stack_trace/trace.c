@@ -15,12 +15,12 @@ static VALUE check_proc;
 pthread_cond_t trace_finished = PTHREAD_COND_INITIALIZER;
 pthread_mutex_t trace_access_mutex = PTHREAD_MUTEX_INITIALIZER;
 
-void free_trace(Trace *trace) {
+static void free_trace(Trace *trace) {
   free_span(trace->top_span);
   free(trace);
 }
 
-void process_obsolote_event(Event *event) {
+static void process_obsolote_event(Event *event) {
   // Free this trace as there is no reference to it anymore!
   free_trace(event->trace);
 }
