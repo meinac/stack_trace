@@ -14,9 +14,12 @@ struct MemoS {
 };
 
 static void copy_str(char **target, VALUE string) {
-  *target = malloc(sizeof(char) * RSTRING_LEN(string) + 1);
+  const char *cstr = StringValueCStr(string);
+  size_t len = strlen(cstr);
 
-  memcpy(*target, RSTRING_PTR(string), RSTRING_LEN(string));
+  *target = malloc(sizeof(char) * (len + 1));
+
+  memcpy(*target, cstr, (len + 1));
 }
 
 static int extract_kv(VALUE key, VALUE value, VALUE data) {
