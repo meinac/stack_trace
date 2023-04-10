@@ -4,15 +4,22 @@
 
 #include "event_store.h"
 #include "trace.h"
+#include "types/event.h"
 
 static bool running = false;
 static VALUE ractor;
 
 static VALUE listen_events(VALUE data, VALUE m, int _argc, const VALUE *_argv, VALUE _) {
   running = true;
+  Event event;
+  int status;
 
   while(running) {
-    consume_event(&process_event);
+    get_event(&event, &status);
+
+    if(status == 0) process_event(&event);
+
+    rb_thread_check_ints();
   }
 
   return Qtrue;

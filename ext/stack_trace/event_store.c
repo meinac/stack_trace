@@ -38,8 +38,6 @@ static void wait_free_space() {
 
 static int wait_event() {
   if(free_space == SIZE) {
-    rb_thread_check_ints(); // Otherwise the GC stucks!
-
     struct timespec ts;
     clock_gettime(CLOCK_REALTIME, &ts);
     ts.tv_nsec += TEN_MILLISECONDS;
@@ -80,7 +78,6 @@ static void event_consumed() {
   pthread_cond_signal(&has_space);
 }
 
-// Takes a callback function which populates the event information.
 void produce_event(Event event) {
   pthread_mutex_lock(&lock);
 
@@ -93,14 +90,15 @@ void produce_event(Event event) {
   pthread_mutex_unlock(&lock);
 }
 
-// Takes a callback function which consumes the event.
-void consume_event(void(*processor_func)(Event *event)) {
+void get_event(Event *target, int *status) {
   pthread_mutex_lock(&lock);
+  *status = 1;
 
   Event *event = pull_event();
 
   if(event != NULL) {
-    processor_func(event);
+    *status = 0;
+    memcpy(target, event, sizeof(Event));
 
     event_consumed();
   }
