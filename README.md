@@ -33,6 +33,11 @@ StackTrace.configure do |config|
 
   config.check_proc = -> (klass_name, method_name) do # If you want to limit the tracing for a set of classes
     klass_name == "Bar"
+
+    # If you use autoload and resolve the constant with `klass_name`
+    # it's really likelly that you get a segfault: https://bugs.ruby-lang.org/issues/18120.
+    # Preload all the constants before running the `StackTrace.trace` if you want to
+    # constantize klass_name.
   end
 end
 ```
