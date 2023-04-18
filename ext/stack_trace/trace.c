@@ -32,7 +32,7 @@ void set_check_proc(VALUE proc) {
 static VALUE call_proc(VALUE val) {
   Event *event = (Event *)val;
 
-  return rb_funcall(check_proc, rb_intern("call"), 2, rb_str_new_cstr(event->self_klass), event->method);
+  return rb_funcall(check_proc, rb_intern("call"), 3, rb_str_new_cstr(event->self_klass), rb_str_new_cstr(event->klass), event->method);
 }
 
 static bool is_tracked_event(Event *event) {
